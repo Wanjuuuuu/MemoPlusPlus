@@ -33,7 +33,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
     @NonNull
     @Override
     public MemoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MemoHolder(LayoutInflater.from(mContext).inflate(R.layout.memo_view, parent,
+        return new MemoHolder(LayoutInflater.from(mContext).inflate(R.layout.preview_memo_view, parent,
                 false));
     }
 
@@ -55,8 +55,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
 
         MemoHolder(View view) {
             super(view);
-            mTitleView = view.findViewById(R.id.title_preview_text_view);
-            mContentView = view.findViewById(R.id.content_preview_text_view);
+            mTitleView = view.findViewById(R.id.preview_title_text_view);
+            mContentView = view.findViewById(R.id.preview_content_text_view);
             mThumbnailView = view.findViewById(R.id.thumbnail_image_view);
         }
 

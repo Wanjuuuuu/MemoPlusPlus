@@ -5,4 +5,6 @@
     <color name="colorAccent">#ff99b900</color>
 
     <color name="border_color">#ffe0e0e0</color>
+    <color name="rectangle_outside_bg_color">#ffe0e0e0</color>
+    <color name="rectangle_inside_bg_color">#ffffffff</color>
 </resources>

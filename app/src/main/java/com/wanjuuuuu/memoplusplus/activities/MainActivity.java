@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerView = findViewById(R.id.memo_recycler_view);
+        mRecyclerView = findViewById(R.id.preview_memo_recycler_view);
 
         // just mock
         String mockText = getResources().getString(R.string.mock_text);
