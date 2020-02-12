@@ -9,10 +9,12 @@
     <!--MemoDetailActivity-->
     <dimen name="detail_layout_marginTop">26dp</dimen>
     <dimen name="detail_layout_marginBottom">12dp</dimen>
-    <dimen name="detail_layout_marginStart">16dp</dimen>
-    <dimen name="detail_layout_marginEnd">12dp</dimen>
-    <dimen name="detail_item_marginBottom">24dp</dimen>
-    <dimen name="detail_photo_height">120dp</dimen>
+    <dimen name="detail_item_marginBottom">10dp</dimen>
+    <dimen name="detail_item_paddingTop">12dp</dimen>
+    <dimen name="detail_item_paddingBottom">12dp</dimen>
+    <dimen name="detail_item_paddingStart">16dp</dimen>
+    <dimen name="detail_item_paddingEnd">16dp</dimen>
+    <dimen name="detail_photo_maxHeight">200dp</dimen>
     <dimen name="detail_title_size">18sp</dimen>
     <dimen name="detail_content_size">14sp</dimen>
     <!--drawable-->
