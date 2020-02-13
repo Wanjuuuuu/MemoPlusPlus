@@ -1,8 +1,17 @@
 <resources>
     <string name="app_name">MemoPlusPlus</string>
     <string name="mock_text">이것은 바로 타이틀 밑에 있는 컨텐츠지 컨텐츠가 중요하지 중요해 이것은 바로 타이틀 밑에 있는 컨텐츠지 컨텐츠가 중요하지 중요해 이것은 바로 타이틀 밑에 있는 컨텐츠지 컨텐츠가 중요하지 중요해 이것은 바로 타이틀 밑에 있는 컨텐츠지 컨텐츠가 중요하지 중요해</string>
+    <!--MainActivity-->
+    <string name="add_memo_menu">메모 추가</string>
     <!--MemoUpdateActivity-->
     <string name="update_title_hint">제목</string>
     <string name="update_content_hint">내용</string>
-    <string name="update_photo_text"></string>
+    <string name="update_complete_menu">완료</string>
+    <string name="update_photo_menu">사진첨부</string>
+    <string name="photo_from_gallery">앨범 사진첨부</string>
+    <string name="photo_from_camera">카메라 사진첨부</string>
+    <string name="photo_from_link">링크 사진첨부</string>
+    <!--MemoDetailActivity-->
+    <string name="modify_menu">수정</string>
+    <string name="delete_menu">삭제</string>
 </resources>

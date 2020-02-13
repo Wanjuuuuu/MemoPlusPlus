@@ -1,7 +1,11 @@
 package com.wanjuuuuu.memoplusplus.activities;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,5 +40,27 @@ public class MemoUpdateActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mPhotoAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.update_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.photo_from_gallery_menu:
+                break;
+            case R.id.photo_from_camera_menu:
+                break;
+            case R.id.photo_from_link_menu:
+                break;
+            case R.id.update_complete_menu:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
