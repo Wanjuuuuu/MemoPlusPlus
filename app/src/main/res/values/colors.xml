@@ -2,10 +2,12 @@
 <resources>
     <color name="colorPrimary">#ff00b900</color>
     <color name="colorPrimaryDark">#ff00b900</color>
-    <color name="colorAccent">#ff99b900</color>
+    <color name="colorAccent">#ff00b900</color>
 
     <color name="border_color">#ffefefef</color>
     <color name="background_color">#ffefefef</color>
     <color name="rectangle_outside_bg_color">#ffefefef</color>
     <color name="rectangle_inside_bg_color">#ffffffff</color>
+
+    <color name="edit_text_hint_color">#ff00b900</color>
 </resources>
