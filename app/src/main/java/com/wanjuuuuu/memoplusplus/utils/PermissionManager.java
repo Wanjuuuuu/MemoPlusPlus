@@ -15,7 +15,6 @@ public final class PermissionManager {
 
     private static final String[] ALL_PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA
     };
 
@@ -44,7 +43,7 @@ public final class PermissionManager {
             return false;
         }
         for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
+            if (result == PackageManager.PERMISSION_DENIED) {
                 return true;
             }
         }
