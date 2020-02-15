@@ -24,16 +24,13 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MemoAdapter mMemoAdapter;
 
-    private PermissionManager mPermissionManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // request necessary Permissions to use app
-        mPermissionManager = PermissionManager.getInstance();
-        mPermissionManager.requestAll(this);
+        PermissionManager.requestAll(this);
 
         mRecyclerView = findViewById(R.id.preview_memo_recycler_view);
 
@@ -69,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (!mPermissionManager.isGranted(grantResults)) {
-            Toast.makeText(this, getResources().getString(R.string.toast_permission_warning),
+        if (PermissionManager.isDenied(grantResults)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_all_permission_warning),
                     Toast.LENGTH_LONG).show();
             finish();
         }
