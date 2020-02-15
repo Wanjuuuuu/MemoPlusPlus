@@ -1,10 +1,13 @@
 package com.wanjuuuuu.memoplusplus.models;
 
-public class Memo {
-    // TODO: immutable?
+public final class Memo {
+
     private String title;
     private String content;
     private Image image;
+
+    public Memo() {
+    }
 
     public Memo(String title, String content, Image image) {
         this.title = title;

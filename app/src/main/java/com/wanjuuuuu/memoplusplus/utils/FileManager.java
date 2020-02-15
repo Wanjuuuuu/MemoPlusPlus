@@ -1,7 +1,10 @@
 package com.wanjuuuuu.memoplusplus.utils;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,5 +39,25 @@ public final class FileManager {
             Logger.error(TAG, "Error occurred while photoFile is creating");
         }
         return imageFile;
+    }
+
+    public static String getFilePathFromUri(Context context, Uri uri) {
+        String filePath = null;
+        Cursor cursor = null;
+        try {
+            String[] projections = {MediaStore.Images.Media.DATA};
+            cursor = context.getContentResolver().query(uri, projections, null, null, null);
+            if (cursor != null) {
+                int index = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                Logger.debug(TAG, cursor.getString(index));
+                filePath = cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return filePath;
     }
 }

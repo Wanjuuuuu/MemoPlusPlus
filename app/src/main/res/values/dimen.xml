@@ -25,7 +25,6 @@
     <dimen name="update_item_paddingBottom">12dp</dimen>
     <dimen name="update_item_paddingStart">16dp</dimen>
     <dimen name="update_item_paddingEnd">16dp</dimen>
-    <dimen name="update_photo_maxHeight">200dp</dimen>
     <dimen name="update_title_size">16sp</dimen>
     <dimen name="update_content_size">16sp</dimen>
     <!--drawable-->

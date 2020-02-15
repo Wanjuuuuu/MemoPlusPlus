@@ -26,14 +26,20 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
         mMemoList = new ArrayList<>();
     }
 
-    public void addMemos(List<Memo> memos) {
+    public void insertMemos(List<Memo> memos) {
+        if (memos == null || memos.isEmpty()) {
+            return;
+        }
+//        int positionStart = getItemCount();
         mMemoList.addAll(memos);
+//        notifyItemRangeInserted(positionStart, memos.size());
     }
 
     @NonNull
     @Override
     public MemoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MemoHolder(LayoutInflater.from(mContext).inflate(R.layout.preview_memo_view, parent,
+        return new MemoHolder(LayoutInflater.from(mContext).inflate(R.layout.preview_memo_view,
+                parent,
                 false));
     }
 
@@ -49,18 +55,22 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
     }
 
     class MemoHolder extends RecyclerView.ViewHolder {
+
         private TextView mTitleView;
         private TextView mContentView;
         private ImageView mThumbnailView;
 
-        MemoHolder(View view) {
+        private MemoHolder(View view) {
             super(view);
             mTitleView = view.findViewById(R.id.preview_title_text_view);
             mContentView = view.findViewById(R.id.preview_content_text_view);
             mThumbnailView = view.findViewById(R.id.thumbnail_image_view);
         }
 
-        void bind(Memo memo) {
+        private void bind(Memo memo) {
+            if (memo == null) {
+                return;
+            }
             mTitleView.setText(memo.getTitle());
             mContentView.setText(memo.getContent());
             // handle mThumbnailView

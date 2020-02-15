@@ -25,8 +25,13 @@ public class DetailPhotoAdapter extends RecyclerView.Adapter<DetailPhotoAdapter.
         mImageList = new ArrayList<>();
     }
 
-    public void addImages(List<Image> images) {
+    public void insertImages(List<Image> images) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+//        int positionStart = getItemCount();
         mImageList.addAll(images);
+//        notifyItemRangeInserted(positionStart, images.size());
     }
 
     @NonNull
@@ -48,14 +53,18 @@ public class DetailPhotoAdapter extends RecyclerView.Adapter<DetailPhotoAdapter.
     }
 
     class PhotoHolder extends RecyclerView.ViewHolder {
+
         private ImageView mPhotoView;
 
-        PhotoHolder(View view) {
+        private PhotoHolder(View view) {
             super(view);
             mPhotoView = view.findViewById(R.id.detail_image_view);
         }
 
-        void bind(Image image) {
+        private void bind(Image image) {
+            if (image == null) {
+                return;
+            }
             // handle mPhotoView
         }
     }

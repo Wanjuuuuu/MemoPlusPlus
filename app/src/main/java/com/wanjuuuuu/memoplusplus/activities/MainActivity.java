@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mMemoAdapter = new MemoAdapter(this);
-        mMemoAdapter.addMemos(memos);
+        mMemoAdapter.insertMemos(memos);
         mRecyclerView.setAdapter(mMemoAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);

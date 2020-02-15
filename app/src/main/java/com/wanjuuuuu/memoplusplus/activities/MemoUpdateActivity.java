@@ -2,6 +2,7 @@ package com.wanjuuuuu.memoplusplus.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +22,7 @@ import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.EditPhotoAdapter;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
+import com.wanjuuuuu.memoplusplus.utils.Logger;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 
 import java.io.File;
@@ -29,6 +31,8 @@ import java.util.List;
 
 public class MemoUpdateActivity extends AppCompatActivity {
 
+    private static final String TAG = MemoUpdateActivity.class.getSimpleName();
+
     private static final String[] PERMISSIONS_FOR_GALLERY = {
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
@@ -36,11 +40,12 @@ public class MemoUpdateActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
 
-    private static final int RESULT_CODE_GALLERY = 0;
-    private static final int RESULT_CODE_CAMERA = 1;
+    private static final int REQUEST_CODE_GALLERY = 0;
+    private static final int REQUEST_CODE_CAMERA = 1;
 
     private RecyclerView mRecyclerView;
     private EditPhotoAdapter mPhotoAdapter;
+    private String mPhotoPathFromCamera;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,12 +55,9 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
         // just mock
         List<Image> images = new ArrayList<>();
-        for (int i = 0; i < 30; ++i) {
-            images.add(new Image());
-        }
 
         mPhotoAdapter = new EditPhotoAdapter(this);
-        mPhotoAdapter.addImages(images);
+        mPhotoAdapter.insertImages(images);
         mRecyclerView.setAdapter(mPhotoAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -99,7 +101,10 @@ public class MemoUpdateActivity extends AppCompatActivity {
         if (requestCode == PermissionManager.REQUEST_CODE_GALLERY) {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-            startActivityForResult(intent, RESULT_CODE_GALLERY);
+            if (intent.resolveActivity(getPackageManager()) == null) {
+                return;
+            }
+            startActivityForResult(Intent.createChooser(intent, "안녕"), REQUEST_CODE_GALLERY);
         } else if (requestCode == PermissionManager.REQUEST_CODE_CAMERA) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(getPackageManager()) == null) {
@@ -108,10 +113,37 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
             File imageFile = FileManager.createImageFile(this);
             if (imageFile != null) {
+                mPhotoPathFromCamera = imageFile.getAbsolutePath();
+
                 Uri photoUri = FileProvider.getUriForFile(this,
                         FileManager.getFileProviderName(this), imageFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(intent, RESULT_CODE_CAMERA);
+                startActivityForResult(intent, REQUEST_CODE_CAMERA);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_GALLERY) {
+            if (resultCode == RESULT_OK) {
+                if (data == null || data.getData() == null) {
+                    return;
+                }
+                String photoPathForGallery = FileManager.getFilePathFromUri(this, data.getData());
+                if (photoPathForGallery == null) {
+                    Logger.debug(TAG, "PhotoPath is null");
+                    return;
+                }
+                Image image = new Image(photoPathForGallery);
+                mPhotoAdapter.insertImage(image);
+            }
+        } else if (requestCode == REQUEST_CODE_CAMERA) {
+            if (resultCode == RESULT_OK) {
+                Image image = new Image(mPhotoPathFromCamera);
+                mPhotoAdapter.insertImage(image);
             }
         }
     }

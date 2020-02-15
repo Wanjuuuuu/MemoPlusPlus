@@ -36,7 +36,7 @@ public class MemoDetailActivity extends AppCompatActivity {
         }
 
         mPhotoAdapter = new DetailPhotoAdapter(this);
-        mPhotoAdapter.addImages(images);
+        mPhotoAdapter.insertImages(images);
         mRecyclerView.setAdapter(mPhotoAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
