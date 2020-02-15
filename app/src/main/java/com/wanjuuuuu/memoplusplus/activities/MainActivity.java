@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.MemoAdapter;
 import com.wanjuuuuu.memoplusplus.models.Memo;
+import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +24,17 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MemoAdapter mMemoAdapter;
 
+    private PermissionManager mPermissionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // request necessary Permissions to use app
+        mPermissionManager = PermissionManager.getInstance();
+        mPermissionManager.requestAll(this);
+
         mRecyclerView = findViewById(R.id.preview_memo_recycler_view);
 
         // just mock
@@ -55,5 +64,15 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (!mPermissionManager.isGranted(grantResults)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_permission_warning),
+                    Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 }
