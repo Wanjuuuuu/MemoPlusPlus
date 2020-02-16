@@ -66,6 +66,7 @@ public class DetailPhotoAdapter extends RecyclerView.Adapter<DetailPhotoAdapter.
                 return;
             }
             // handle mPhotoView
+            // Glide.error(R.drawable.ic_error)?
         }
     }
 }

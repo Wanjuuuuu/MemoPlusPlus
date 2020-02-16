@@ -14,6 +14,7 @@
     <string name="photo_from_link">링크 사진첨부</string>
     <string name="toast_permission_warning">권한을 허용하지 않으면 기능을 사용할 수 없습니다.</string>
     <string name="toast_dialog_warning">링크 url을 입력해주세요.</string>
+    <string name="toast_glide_error">사진을 가져오는데 실패했습니다.</string>
     <string name="dialog_link_description">첨부하고 싶은 사진의 링크 url을 입력해주세요.</string>
     <string name="dialog_positive_button">첨부</string>
     <string name="dialog_negative_button">취소</string>
