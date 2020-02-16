@@ -31,6 +31,11 @@
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.MemoDetailActivity"
@@ -38,13 +43,7 @@
         <activity
             android:name=".activities.MemoUpdateActivity"
             android:configChanges="orientation"
-            android:theme="@style/MemoUpdateTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/MemoUpdateTheme" />
     </application>
 
 </manifest>

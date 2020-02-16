@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CODE_DETAIL = 100;
+    private static final int REQUEST_CODE_ADD = 101;
 
     private RecyclerView mRecyclerView;
     private MemoAdapter mMemoAdapter;
@@ -58,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.add_memo_menu) {
-
+            Intent intent = new Intent(this, MemoUpdateActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_ADD);
         }
         return super.onOptionsItemSelected(item);
     }

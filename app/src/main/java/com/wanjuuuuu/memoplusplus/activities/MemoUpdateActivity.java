@@ -1,6 +1,7 @@
 package com.wanjuuuuu.memoplusplus.activities;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,10 +10,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,7 +27,7 @@ import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
 import com.wanjuuuuu.memoplusplus.utils.Logger;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
-import com.wanjuuuuu.memoplusplus.views.WrapAlertDialog;
+import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,8 +44,8 @@ public class MemoUpdateActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
 
-    private static final int REQUEST_CODE_GALLERY = 0;
-    private static final int REQUEST_CODE_CAMERA = 1;
+    private static final int REQUEST_CODE_GALLERY = 103;
+    private static final int REQUEST_CODE_CAMERA = 104;
 
     private RecyclerView mRecyclerView;
     private EditPhotoAdapter mPhotoAdapter;
@@ -83,23 +86,25 @@ public class MemoUpdateActivity extends AppCompatActivity {
                         PermissionManager.REQUEST_CODE_CAMERA);
                 break;
             case R.id.photo_from_link_menu:
-                final WrapAlertDialog alertDialog = new WrapAlertDialog(this);
-                alertDialog.show();
-                alertDialog.setPositiveListener(new View.OnClickListener() {
+                final LinkInputDialog inputDialog = new LinkInputDialog(this);
+                inputDialog.show();
+                inputDialog.setPositiveListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String mPhotoPathFromlinkUrl = alertDialog.getLinkUrl();
+                        String mPhotoPathFromlinkUrl = inputDialog.getLinkUrl();
                         if (mPhotoPathFromlinkUrl == null || mPhotoPathFromlinkUrl.length() == 0) {
                             showToast(getResources().getString(R.string.toast_dialog_warning));
                             return;
                         }
                         Image image = new Image(mPhotoPathFromlinkUrl);
                         mPhotoAdapter.insertImage(image);
-                        alertDialog.dismiss();
+                        inputDialog.dismiss();
                     }
                 });
                 break;
             case R.id.update_complete_menu:
+                // save
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -163,7 +168,31 @@ public class MemoUpdateActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog dialog = createDialog();
+        dialog.show();
+
+        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (button != null) {
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+    }
+
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private AlertDialog createDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(getResources().getString(R.string.dialog_back_description));
+        dialogBuilder.setPositiveButton(getResources().getString(R.string.dialog_back_button), null);
+        dialogBuilder.setNegativeButton(getResources().getString(R.string.dialog_negative_button), null);
+        return dialogBuilder.create();
     }
 }

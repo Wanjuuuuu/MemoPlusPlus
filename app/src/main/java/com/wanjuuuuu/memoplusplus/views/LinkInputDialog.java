@@ -13,13 +13,13 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.wanjuuuuu.memoplusplus.R;
 
-public class WrapAlertDialog {
+public class LinkInputDialog {
 
     private Context mContext;
     private ClearEditText mEditText;
     private AlertDialog mDialog;
 
-    public WrapAlertDialog(Context context) {
+    public LinkInputDialog(Context context) {
         mContext = context;
         mDialog = createDialog();
     }

@@ -1,5 +1,6 @@
 package com.wanjuuuuu.memoplusplus.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemoDetailActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CODE_UPDATE = 102;
 
     private RecyclerView mRecyclerView;
     private DetailPhotoAdapter mPhotoAdapter;
@@ -53,8 +56,11 @@ public class MemoDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.detail_modify_menu:
+                Intent intent = new Intent(this, MemoUpdateActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_UPDATE);
                 break;
             case R.id.detail_delete_menu:
+                // remove memo
                 break;
         }
         return super.onOptionsItemSelected(item);
