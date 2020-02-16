@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -37,7 +38,13 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
         mClearButton = getResources().getDrawable(R.drawable.ic_cancel, null);
         mClearButton.setBounds(0, 0, mClearButton.getIntrinsicWidth(),
                 mClearButton.getIntrinsicHeight());
-        setClearBtnVisible(false);
+        setButtonVisible(false);
+
+        setPadding(0, 0, 0, 0);
+        setBackground(getResources().getDrawable(R.drawable.border));
+        setHintTextColor(getResources().getColor(R.color.edit_text_hint_color));
+        setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.update_title_size));
 
         addTextChangedListener(new TextWatcher() {
             @Override
@@ -47,7 +54,7 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (isFocused()) {
-                    setClearBtnVisible(charSequence.length() > 0);
+                    setButtonVisible(charSequence.length() > 0);
                 }
             }
 
@@ -64,9 +71,9 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
     public void onFocusChange(View view, boolean b) {
         if (b) {
             Editable text = getText();
-            setClearBtnVisible(text != null && text.length() > 0);
+            setButtonVisible(text != null && text.length() > 0);
         } else {
-            setClearBtnVisible(false);
+            setButtonVisible(false);
         }
     }
 
@@ -83,7 +90,7 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
         return false;
     }
 
-    private void setClearBtnVisible(boolean needVisible) {
+    private void setButtonVisible(boolean needVisible) {
         mClearButton.setVisible(needVisible, false);
         setCompoundDrawables(null, null, needVisible ? mClearButton : null, null);
     }

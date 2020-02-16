@@ -10,4 +10,5 @@
     <color name="edit_text_hint_color">#ff00b900</color>
 
     <color name="menu_icon_color">#ffffffff</color>
+    <color name="warning_icon_color">#ffed4c4c</color>
 </resources>

@@ -91,7 +91,7 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
                 return;
             }
             mImage = image;
-            Glide.with(mContext).load(mImage.getPath()).error(R.drawable.ic_cancel).into(mPhotoView);
+            Glide.with(mContext).load(mImage.getPath()).error(R.drawable.ic_error).into(mPhotoView);
         }
 
         @Override

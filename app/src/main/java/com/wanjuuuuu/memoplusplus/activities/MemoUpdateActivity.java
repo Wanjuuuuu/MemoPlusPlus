@@ -2,13 +2,13 @@ package com.wanjuuuuu.memoplusplus.activities;
 
 import android.Manifest;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +24,7 @@ import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
 import com.wanjuuuuu.memoplusplus.utils.Logger;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
+import com.wanjuuuuu.memoplusplus.views.WrapAlertDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,6 +83,21 @@ public class MemoUpdateActivity extends AppCompatActivity {
                         PermissionManager.REQUEST_CODE_CAMERA);
                 break;
             case R.id.photo_from_link_menu:
+                final WrapAlertDialog alertDialog = new WrapAlertDialog(this);
+                alertDialog.show();
+                alertDialog.setPositiveListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mPhotoPathFromlinkUrl = alertDialog.getLinkUrl();
+                        if (mPhotoPathFromlinkUrl == null || mPhotoPathFromlinkUrl.length() == 0) {
+                            showToast(getResources().getString(R.string.toast_dialog_warning));
+                            return;
+                        }
+                        Image image = new Image(mPhotoPathFromlinkUrl);
+                        mPhotoAdapter.insertImage(image);
+                        alertDialog.dismiss();
+                    }
+                });
                 break;
             case R.id.update_complete_menu:
                 break;
@@ -93,8 +109,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (PermissionManager.isDenied(grantResults)) {
-            Toast.makeText(this, getResources().getString(R.string.toast_permission_warning),
-                    Toast.LENGTH_LONG).show();
+            showToast(getResources().getString(R.string.toast_permission_warning));
             return;
         }
 
@@ -148,4 +163,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
         }
     }
 
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
 }

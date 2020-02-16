@@ -27,10 +27,7 @@
                 android:id="@+id/update_title_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:hint="@string/update_title_hint"
-                android:textColorHint="@color/edit_text_hint_color"
-                android:textSize="@dimen/update_title_size" />
+                android:hint="@string/update_title_hint" />
         </LinearLayout>
 
         <LinearLayout
@@ -48,10 +45,7 @@
                 android:id="@+id/update_content_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:hint="@string/update_content_hint"
-                android:textColorHint="@color/edit_text_hint_color"
-                android:textSize="@dimen/update_content_size" />
+                android:hint="@string/update_content_hint" />
 
         </LinearLayout>
 

@@ -30,4 +30,9 @@
     <!--drawable-->
     <dimen name="border_width">0.5dp</dimen>
     <dimen name="border_radius">16dp</dimen>
+    <!--views-->
+    <dimen name="dialog_edit_text_marginTop">12dp</dimen>
+    <dimen name="dialog_edit_text_marginBottom">4dp</dimen>
+    <dimen name="dialog_edit_text_marginLeft">12dp</dimen>
+    <dimen name="dialog_edit_text_marginRight">12dp</dimen>
 </resources>
