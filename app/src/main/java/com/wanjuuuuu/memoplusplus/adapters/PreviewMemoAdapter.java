@@ -122,9 +122,10 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
 
             Image firstImage = memo.getFirstImage();
             if (firstImage == null || firstImage.getPath() == null) {
-                Glide.with(mContext).load(mContext.getResources().getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
+                mThumbnailView.setVisibility(View.GONE);
                 return;
             }
+            mThumbnailView.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(firstImage.getPath())
                     .error(mContext.getResources().getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
         }

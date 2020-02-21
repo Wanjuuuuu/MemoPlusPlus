@@ -2,8 +2,8 @@
 <resources>
     <!--MainActivity-->
     <dimen name="preview_memo_height">92dp</dimen>
-    <dimen name="image_thumbnail_height">56dp</dimen>
-    <dimen name="image_thumbnail_width">56dp</dimen>
+    <dimen name="image_thumbnail_height">72dp</dimen>
+    <dimen name="image_thumbnail_width">72dp</dimen>
     <dimen name="preview_title_size">16sp</dimen>
     <dimen name="preview_content_size">12sp</dimen>
     <!--MemoDetailActivity-->
