@@ -67,7 +67,7 @@ public class DetailPhotoAdapter extends RecyclerView.Adapter<DetailPhotoAdapter.
                 path = image.getPath();
             }
             Glide.with(mContext).load(path)
-                    .error(mContext.getResources().getDrawable(R.drawable.ic_error)).into(mPhotoView);
+                    .error(mContext.getResources().getDrawable(R.drawable.ic_fallback)).into(mPhotoView);
         }
     }
 }

@@ -16,11 +16,13 @@ public interface MemoDao {
     @Transaction
     @Query("SELECT * FROM (\n" +
             "SELECT memo.*, image.* FROM memo\n" +
-            "JOIN image ON image.imageid = (SELECT imageid FROM image WHERE memoid = memo.id LIMIT 1)\n" +
-            "UNION\n" +
+            "INNER JOIN image ON image.imageid = (SELECT imageid FROM image WHERE memoid = memo.id " +
+            "LIMIT 1)\n" +
+            "UNION ALL\n" +
             "SELECT memo.*, CAST(NULL AS INT), CAST(NULL AS INT), CAST(NULL AS STRING) FROM " +
             "memo\n" +
-            ") AS together GROUP BY together.id ORDER BY together.modifytimestamp")
+            "WHERE NOT EXISTS (SELECT imageid FROM image WHERE memoid = memo.id)\n" +
+            ") AS together ORDER BY together.modifytimestamp")
     List<MemoWithFirstImage> getAllMemoWithFirstImage();
 
     @Transaction
@@ -33,7 +35,7 @@ public interface MemoDao {
             "SELECT memo.*, CAST(NULL AS INT), CAST(NULL AS INT), CAST(NULL AS STRING) FROM " +
             "memo\n" +
             "WHERE memo.id = :id\n" +
-            ") AS together GROUP BY together.id")
+            ")")
     MemoWithFirstImage getMemoWithFristImage(long id);
 
     @Query("SELECT * FROM memo WHERE memo.id = :id")

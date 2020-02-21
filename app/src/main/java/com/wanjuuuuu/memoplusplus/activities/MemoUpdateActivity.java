@@ -30,7 +30,6 @@ import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.utils.Constant;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
-import com.wanjuuuuu.memoplusplus.utils.Logger;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 import com.wanjuuuuu.memoplusplus.views.ClearEditText;
 import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;

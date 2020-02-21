@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Constant.ResultCodes.ADDED) {
                 if (newMemo != null) {
                     mMemoAdapter.addMemo(newMemo);
+                    mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
                 }
             }
         } else if (requestCode == REQUEST_CODE_DETAIL) {
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 mMemoAdapter.removeMemo(mMemoClicked);
                 if (newMemo != null) {
                     mMemoAdapter.addMemo(newMemo);
+                    mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
                 }
             }
         }

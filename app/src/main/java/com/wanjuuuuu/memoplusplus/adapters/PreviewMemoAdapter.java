@@ -91,9 +91,7 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
 
         private MemoHolder(View view) {
             super(view);
-            mTitleView = view.findViewById(R.id.preview_title_text_view);
-            mContentView = view.findViewById(R.id.preview_content_text_view);
-            mThumbnailView = view.findViewById(R.id.thumbnail_image_view);
+
             ConstraintLayout memoPreview = view.findViewById(R.id.memo_preview);
             memoPreview.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -103,6 +101,9 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
                     }
                 }
             });
+            mTitleView = view.findViewById(R.id.preview_title_text_view);
+            mContentView = view.findViewById(R.id.preview_content_text_view);
+            mThumbnailView = view.findViewById(R.id.thumbnail_image_view);
         }
 
         private void bind(MemoWithFirstImage memo) {
@@ -111,26 +112,21 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
             }
             mMemo = memo;
             String title = mMemo.getMemo().getTitle();
+
             if (title == null || title.length() == 0) {
                 title = mContext.getResources().getString(R.string.default_fill_title);
             }
             mTitleView.setText(title);
             String content = mMemo.getMemo().getContent();
-//            if (content == null || content.length() == 0) {
-//                Logger.debug("PreviewMemoAdapter", title +" 's content is gone");
-//                mContentView.setVisibility(View.GONE);
-//            } else {
-//                Logger.debug("PreviewMemoAdapter", title +" 's content is " + content);
-                mContentView.setText(content);
-//            }
+            mContentView.setText(content);
 
             Image firstImage = memo.getFirstImage();
             if (firstImage == null || firstImage.getPath() == null) {
-                mThumbnailView.setVisibility(View.GONE);
+                Glide.with(mContext).load(mContext.getResources().getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
                 return;
             }
             Glide.with(mContext).load(firstImage.getPath())
-                    .error(mContext.getResources().getDrawable(R.drawable.ic_error)).into(mThumbnailView);
+                    .error(mContext.getResources().getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
         }
     }
 }
