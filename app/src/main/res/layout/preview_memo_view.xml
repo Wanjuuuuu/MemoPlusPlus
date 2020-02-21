@@ -25,6 +25,7 @@
             android:layout_marginTop="16dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textColor="@color/text_color"
             android:textSize="@dimen/preview_title_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,6 +38,7 @@
             android:layout_marginBottom="14dp"
             android:ellipsize="end"
             android:maxLines="2"
+            android:textColor="@color/light_text_color"
             android:textSize="@dimen/preview_content_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

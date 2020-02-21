@@ -99,7 +99,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         mMemo = bundle.getParcelable("memo");
         if (mMemo == null) {
-            showToast(getResources().getString(R.string.toast_update_memo_error));
+            showToast(getString(R.string.toast_update_memo_error));
             setResult(Constant.ResultCodes.FAILED);
             finish();
             return;
@@ -137,7 +137,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         String mPhotoPathFromlinkUrl = inputDialog.getLinkUrl();
                         if (mPhotoPathFromlinkUrl == null || mPhotoPathFromlinkUrl.length() == 0) {
-                            showToast(getResources().getString(R.string.toast_dialog_warning));
+                            showToast(getString(R.string.toast_dialog_warning));
                             return;
                         }
                         Image image = new Image(0, 0, mPhotoPathFromlinkUrl);
@@ -148,7 +148,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
                 break;
             case R.id.update_complete_menu:
                 if (!isContentFilled()) {
-                    showToast(getResources().getString(R.string.toast_text_warning));
+                    showToast(getString(R.string.toast_text_warning));
                     return false;
                 }
                 boolean isAddition = false;
@@ -174,7 +174,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (PermissionManager.isDenied(grantResults)) {
-            showToast(getResources().getString(R.string.toast_permission_warning));
+            showToast(getString(R.string.toast_permission_warning));
             return;
         }
 
@@ -214,7 +214,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
                 }
                 String photoPathForGallery = FileManager.getFilePathFromUri(this, data.getData());
                 if (photoPathForGallery == null) {
-                    showToast(getResources().getString(R.string.toast_load_photo_error));
+                    showToast(getString(R.string.toast_load_photo_error));
                     return;
                 }
                 Image image = new Image(0, 0, photoPathForGallery);
@@ -230,7 +230,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog dialog = createDialog();
+        final AlertDialog dialog = createDialog();
         dialog.show();
 
         Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
@@ -238,6 +238,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dialog.dismiss();
                     setResult(Constant.ResultCodes.CANCELLED);
                     finish();
                 }
@@ -251,11 +252,9 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
     private AlertDialog createDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle(getResources().getString(R.string.dialog_back_description));
-        dialogBuilder.setPositiveButton(getResources().getString(R.string.dialog_back_button),
-                null);
-        dialogBuilder.setNegativeButton(getResources().getString(R.string.dialog_negative_button)
-                , null);
+        dialogBuilder.setTitle(getString(R.string.dialog_back_description));
+        dialogBuilder.setPositiveButton(getString(R.string.dialog_back_button), null);
+        dialogBuilder.setNegativeButton(getString(R.string.dialog_negative_button), null);
         return dialogBuilder.create();
     }
 

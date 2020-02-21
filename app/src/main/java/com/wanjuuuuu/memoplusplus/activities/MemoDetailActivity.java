@@ -3,7 +3,6 @@ package com.wanjuuuuu.memoplusplus.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -60,13 +59,13 @@ public class MemoDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent == null) {
-            showToast(getResources().getString(R.string.toast_load_memo_error));
+            showToast(getString(R.string.toast_load_memo_error));
             finish();
             return;
         }
         mMemo = intent.getParcelableExtra("memo");
         if (mMemo == null) {
-            showToast(getResources().getString(R.string.toast_load_memo_error));
+            showToast(getString(R.string.toast_load_memo_error));
             finish();
             return;
         }
@@ -100,7 +99,7 @@ public class MemoDetailActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_UPDATE);
                 break;
             case R.id.detail_delete_menu:
-                AlertDialog dialog = createDialog();
+                final AlertDialog dialog = createDialog();
                 dialog.show();
 
                 Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
@@ -108,6 +107,8 @@ public class MemoDetailActivity extends AppCompatActivity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            dialog.dismiss();
+
                             mImageDao.deleteImages(mImages);
                             mMemoDao.deleteMemo(mMemo);
 
@@ -134,7 +135,7 @@ public class MemoDetailActivity extends AppCompatActivity {
                 }
                 long memoId = data.getLongExtra("memoid", 0);
                 if (memoId == 0) {
-                    showToast(getResources().getString(R.string.toast_load_memo_error));
+                    showToast(getString(R.string.toast_load_memo_error));
                     setResult(Constant.ResultCodes.FAILED);
                     finish();
                     return;
@@ -176,10 +177,10 @@ public class MemoDetailActivity extends AppCompatActivity {
 
     private AlertDialog createDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle(getResources().getString(R.string.dialog_delete_description));
-        dialogBuilder.setPositiveButton(getResources().getString(R.string.dialog_delete_button),
+        dialogBuilder.setTitle(getString(R.string.dialog_delete_description));
+        dialogBuilder.setPositiveButton(getString(R.string.dialog_delete_button),
                 null);
-        dialogBuilder.setNegativeButton(getResources().getString(R.string.dialog_cancel_button),
+        dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button),
                 null);
         return dialogBuilder.create();
     }

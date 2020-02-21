@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.wanjuuuuu.memoplusplus.R;
+import com.wanjuuuuu.memoplusplus.utils.ResourceManager;
 
 public class ClearEditText extends AppCompatEditText implements View.OnTouchListener,
         View.OnFocusChangeListener {
@@ -35,14 +37,15 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
     }
 
     private void init() {
-        mClearButton = getResources().getDrawable(R.drawable.ic_cancel, null);
+        mClearButton = getContext().getDrawable(R.drawable.ic_cancel);
         mClearButton.setBounds(0, 0, mClearButton.getIntrinsicWidth(),
                 mClearButton.getIntrinsicHeight());
         setButtonVisible(false);
 
         setPadding(0, 0, 0, 0);
-        setBackground(getResources().getDrawable(R.drawable.border));
-        setHintTextColor(getResources().getColor(R.color.edit_text_hint_color));
+        setBackground(getContext().getDrawable(R.drawable.border));
+        setTextColor(ResourceManager.getColor(getContext(), R.color.text_color));
+        setHintTextColor(ResourceManager.getColor(getContext(), R.color.edit_text_hint_color));
         setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.update_title_size));
 

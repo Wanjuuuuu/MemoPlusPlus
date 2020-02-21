@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (PermissionManager.isDenied(grantResults)) {
-            Toast.makeText(this, getResources().getString(R.string.toast_all_permission_warning),
+            Toast.makeText(this, getString(R.string.toast_all_permission_warning),
                     Toast.LENGTH_LONG).show();
             finish();
         }

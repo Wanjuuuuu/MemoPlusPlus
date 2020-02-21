@@ -75,9 +75,9 @@ public class LinkInputDialog {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
         dialogBuilder.setView(frameLayout);
-        dialogBuilder.setTitle(mContext.getResources().getString(R.string.dialog_link_description));
-        dialogBuilder.setPositiveButton(mContext.getResources().getString(R.string.dialog_positive_button), null);
-        dialogBuilder.setNegativeButton(mContext.getResources().getString(R.string.dialog_negative_button), null);
+        dialogBuilder.setTitle(mContext.getString(R.string.dialog_link_description));
+        dialogBuilder.setPositiveButton(mContext.getString(R.string.dialog_positive_button), null);
+        dialogBuilder.setNegativeButton(mContext.getString(R.string.dialog_negative_button), null);
 
         return dialogBuilder.create();
     }

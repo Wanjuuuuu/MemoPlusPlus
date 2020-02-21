@@ -114,7 +114,7 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
             String title = mMemo.getMemo().getTitle();
 
             if (title == null || title.length() == 0) {
-                title = mContext.getResources().getString(R.string.default_fill_title);
+                title = mContext.getString(R.string.default_fill_title);
             }
             mTitleView.setText(title);
             String content = mMemo.getMemo().getContent();
@@ -127,7 +127,7 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
             }
             mThumbnailView.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(firstImage.getPath())
-                    .error(mContext.getResources().getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
+                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
         }
     }
 }
