@@ -14,12 +14,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.wanjuuuuu.memoplusplus.R;
-import com.wanjuuuuu.memoplusplus.adapters.MemoAdapter;
+import com.wanjuuuuu.memoplusplus.adapters.PreviewMemoAdapter;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 import com.wanjuuuuu.memoplusplus.utils.Constant;
-import com.wanjuuuuu.memoplusplus.utils.Logger;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_ADD = 101;
 
     private RecyclerView mRecyclerView;
-    private MemoAdapter mMemoAdapter;
+    private PreviewMemoAdapter mMemoAdapter;
 
     private MemoDao mMemoDao;
     private MemoWithFirstImage mMemoClicked;
@@ -48,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         mMemoDao = MemoPlusDatabase.getInstance(this).memoDao();
         List<MemoWithFirstImage> memos = mMemoDao.getAllMemoWithFirstImage();
 
-        mMemoAdapter = new MemoAdapter(this);
-        mMemoAdapter.setOnClickListener(new MemoAdapter.OnClickListener() {
+        mMemoAdapter = new PreviewMemoAdapter(this);
+        mMemoAdapter.setOnClickListener(new PreviewMemoAdapter.OnClickListener() {
             @Override
             public void onClick(MemoWithFirstImage memo) {
                 if (memo == null || memo.getMemo() == null) {
@@ -113,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 if (newMemo != null) {
                     mMemoAdapter.addMemo(newMemo);
                 }
-
             }
         }
     }

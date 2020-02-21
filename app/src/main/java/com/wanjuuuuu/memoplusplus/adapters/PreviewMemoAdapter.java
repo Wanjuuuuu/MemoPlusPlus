@@ -1,7 +1,6 @@
 package com.wanjuuuuu.memoplusplus.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.wanjuuuuu.memoplusplus.R;
-import com.wanjuuuuu.memoplusplus.activities.MemoDetailActivity;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 import com.wanjuuuuu.memoplusplus.utils.Logger;
@@ -22,7 +20,7 @@ import com.wanjuuuuu.memoplusplus.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
+public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.MemoHolder> {
 
     public interface OnClickListener {
         void onClick(MemoWithFirstImage memo);
@@ -32,7 +30,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
     private List<MemoWithFirstImage> mMemoList;
     private OnClickListener mClickListener;
 
-    public MemoAdapter(Context context) {
+    public PreviewMemoAdapter(Context context) {
         mContext = context;
         mMemoList = new ArrayList<>();
     }
@@ -46,7 +44,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
             return;
         }
         mMemoList.addAll(memos);
-        Logger.debug("MemoAdapter", "length = " + getItemCount());
+        Logger.debug("PreviewMemoAdapter", "length = " + getItemCount());
     }
 
     public void addMemo(MemoWithFirstImage memo) {
@@ -97,7 +95,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
             mContentView = view.findViewById(R.id.preview_content_text_view);
             mThumbnailView = view.findViewById(R.id.thumbnail_image_view);
             ConstraintLayout memoPreview = view.findViewById(R.id.memo_preview);
-            memoPreview.setOnClickListener(new View.OnClickListener(){
+            memoPreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mClickListener != null) {
@@ -108,13 +106,23 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoHolder> {
         }
 
         private void bind(MemoWithFirstImage memo) {
-            Logger.debug("MemoAdapter", memo.getMemo().getId()+" ");
             if (memo == null || memo.getMemo() == null) {
                 return;
             }
             mMemo = memo;
-            mTitleView.setText(memo.getMemo().getTitle());
-            mContentView.setText(memo.getMemo().getContent());
+            String title = mMemo.getMemo().getTitle();
+            if (title == null || title.length() == 0) {
+                title = mContext.getResources().getString(R.string.default_fill_title);
+            }
+            mTitleView.setText(title);
+            String content = mMemo.getMemo().getContent();
+//            if (content == null || content.length() == 0) {
+//                Logger.debug("PreviewMemoAdapter", title +" 's content is gone");
+//                mContentView.setVisibility(View.GONE);
+//            } else {
+//                Logger.debug("PreviewMemoAdapter", title +" 's content is " + content);
+                mContentView.setText(content);
+//            }
 
             Image firstImage = memo.getFirstImage();
             if (firstImage == null || firstImage.getPath() == null) {

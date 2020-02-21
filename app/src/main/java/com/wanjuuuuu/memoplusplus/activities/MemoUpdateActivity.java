@@ -215,7 +215,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
                 }
                 String photoPathForGallery = FileManager.getFilePathFromUri(this, data.getData());
                 if (photoPathForGallery == null) {
-                    Logger.debug(TAG, "PhotoPath is null");
+                    showToast(getResources().getString(R.string.toast_load_photo_error));
                     return;
                 }
                 Image image = new Image(0, 0, photoPathForGallery);

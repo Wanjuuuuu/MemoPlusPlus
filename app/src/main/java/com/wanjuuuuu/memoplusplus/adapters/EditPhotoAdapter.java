@@ -127,7 +127,7 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
                         mRemoveListener.onRemove(mImage);
                     }
 
-                    Toast.makeText(mContext, mContext.getString(R.string.toast_glide_error),
+                    Toast.makeText(mContext, mContext.getString(R.string.toast_load_photo_error),
                             Toast.LENGTH_LONG).show();
                     return true;
                 }

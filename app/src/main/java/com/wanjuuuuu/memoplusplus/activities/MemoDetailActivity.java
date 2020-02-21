@@ -27,7 +27,6 @@ import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.utils.Constant;
-import com.wanjuuuuu.memoplusplus.utils.Logger;
 
 import java.util.ArrayList;
 
@@ -44,6 +43,7 @@ public class MemoDetailActivity extends AppCompatActivity {
     private ImageDao mImageDao;
     private Memo mMemo;
     private ArrayList<Image> mImages;
+    private boolean mIsUpdated;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,6 +144,7 @@ public class MemoDetailActivity extends AppCompatActivity {
                 mImages = new ArrayList<>(mImageDao.getImages(memoId));
 
                 updateMemoDetail();
+                mIsUpdated = true;
             } else if (resultCode == Constant.ResultCodes.FAILED) {
                 setResult(Constant.ResultCodes.FAILED);
                 finish();
@@ -155,7 +156,11 @@ public class MemoDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent();
         intent.putExtra("memoid", mMemo.getId());
-        setResult(Constant.ResultCodes.UPDATED, intent);
+        if (mIsUpdated) {
+            setResult(Constant.ResultCodes.UPDATED, intent);
+        } else {
+            setResult(Constant.ResultCodes.CANCELLED);
+        }
         finish();
     }
 

@@ -25,7 +25,6 @@
             android:layout_marginTop="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@string/mock_text"
             android:textSize="@dimen/preview_title_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +37,6 @@
             android:layout_marginBottom="14dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@string/mock_text"
             android:textSize="@dimen/preview_content_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +49,7 @@
         android:layout_height="@dimen/image_thumbnail_height"
         android:layout_gravity="center"
         android:layout_marginEnd="12dp"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
