@@ -29,10 +29,6 @@ public final class Image implements Parcelable {
         this.path = path;
     }
 
-    public void setMemoId(long memoId) {
-        this.memoId = memoId;
-    }
-
     public long getImageId() {
         return imageId;
     }

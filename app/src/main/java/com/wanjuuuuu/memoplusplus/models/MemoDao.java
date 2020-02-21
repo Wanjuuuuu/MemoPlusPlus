@@ -22,7 +22,7 @@ public interface MemoDao {
             "SELECT memo.*, CAST(NULL AS INT), CAST(NULL AS INT), CAST(NULL AS STRING) FROM " +
             "memo\n" +
             "WHERE NOT EXISTS (SELECT imageid FROM image WHERE memoid = memo.id)\n" +
-            ") AS together ORDER BY together.modifytimestamp")
+            ") AS together GROUP BY together.id ORDER BY together.modifytimestamp")
     List<MemoWithFirstImage> getAllMemoWithFirstImage();
 
     @Transaction
@@ -35,7 +35,7 @@ public interface MemoDao {
             "SELECT memo.*, CAST(NULL AS INT), CAST(NULL AS INT), CAST(NULL AS STRING) FROM " +
             "memo\n" +
             "WHERE memo.id = :id\n" +
-            ")")
+            ") AS together GROUP BY together.id")
     MemoWithFirstImage getMemoWithFristImage(long id);
 
     @Query("SELECT * FROM memo WHERE memo.id = :id")

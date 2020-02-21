@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -295,12 +296,14 @@ public class MemoUpdateActivity extends AppCompatActivity {
             mMemoDao.updateMemo(mMemo);
         }
 
+        List<Image> newImages = new ArrayList<>();
         for (Image image : mImagesInserted) {
             if (image != null) {
-                image.setMemoId(mMemoId);
+                Image newImage = new Image(image.getImageId(), mMemoId, image.getPath());
+                newImages.add(newImage);
             }
         }
-        mImageDao.insertImages(mImagesInserted);
+        mImageDao.insertImages(newImages);
         mImageDao.deleteImages(mImagesDeleted);
     }
 }

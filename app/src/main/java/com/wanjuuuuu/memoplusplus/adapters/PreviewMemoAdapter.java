@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
-import com.wanjuuuuu.memoplusplus.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,6 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
             return;
         }
         mMemoList.addAll(memos);
-        Logger.debug("PreviewMemoAdapter", "length = " + getItemCount());
     }
 
     public void addMemo(MemoWithFirstImage memo) {
