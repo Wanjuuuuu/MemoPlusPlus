@@ -24,9 +24,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.EditPhotoAdapter;
 import com.wanjuuuuu.memoplusplus.models.Image;
+import com.wanjuuuuu.memoplusplus.models.ImageDao;
+import com.wanjuuuuu.memoplusplus.models.Memo;
+import com.wanjuuuuu.memoplusplus.models.MemoDao;
+import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
+import com.wanjuuuuu.memoplusplus.utils.Constant;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
 import com.wanjuuuuu.memoplusplus.utils.Logger;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
+import com.wanjuuuuu.memoplusplus.views.ClearEditText;
 import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
 
 import java.io.File;
@@ -49,22 +55,61 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private EditPhotoAdapter mPhotoAdapter;
+    private ClearEditText mTitleEditText;
+    private ClearEditText mContentEditText;
+
+    private MemoDao mMemoDao;
+    private ImageDao mImageDao;
+    private Memo mMemo;
+    private List<Image> mImagesInserted;
+    private List<Image> mImagesDeleted;
     private String mPhotoPathFromCamera;
+    private long mMemoId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_update);
         mRecyclerView = findViewById(R.id.update_photo_recycler_view);
-
-        // just mock
-        List<Image> images = new ArrayList<>();
+        mTitleEditText = findViewById(R.id.update_title_edit_text);
+        mContentEditText = findViewById(R.id.update_content_edit_text);
 
         mPhotoAdapter = new EditPhotoAdapter(this);
-        mPhotoAdapter.insertImages(images);
+        mPhotoAdapter.setOnRemoveListener(new EditPhotoAdapter.OnRemoveListener() {
+            @Override
+            public void onRemove(Image image) {
+                removeImage(image);
+            }
+        });
         mRecyclerView.setAdapter(mPhotoAdapter);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
+
+        MemoPlusDatabase database = MemoPlusDatabase.getInstance(this);
+        mMemoDao = database.memoDao();
+        mImageDao = database.imageDao();
+        mImagesInserted = new ArrayList<>();
+        mImagesDeleted = new ArrayList<>();
+
+        Intent intent = getIntent();
+        if (intent == null || intent.getExtras() == null) {
+            return;
+        }
+
+        // to update memo
+        Bundle bundle = intent.getExtras();
+        mMemo = bundle.getParcelable("memo");
+        if (mMemo == null) {
+            showToast(getResources().getString(R.string.toast_update_memo_error));
+            setResult(Constant.ResultCodes.FAILED);
+            finish();
+            return;
+        }
+        mTitleEditText.setText(mMemo.getTitle());
+        mContentEditText.setText(mMemo.getContent());
+
+        List<Image> images = bundle.getParcelableArrayList("images");
+        mPhotoAdapter.initImages(images);
     }
 
     @Override
@@ -96,14 +141,30 @@ public class MemoUpdateActivity extends AppCompatActivity {
                             showToast(getResources().getString(R.string.toast_dialog_warning));
                             return;
                         }
-                        Image image = new Image(mPhotoPathFromlinkUrl);
-                        mPhotoAdapter.insertImage(image);
+                        Image image = new Image(0, 0, mPhotoPathFromlinkUrl);
+                        addImage(image);
                         inputDialog.dismiss();
                     }
                 });
                 break;
             case R.id.update_complete_menu:
-                // save
+                if (!isContentFilled()) {
+                    showToast(getResources().getString(R.string.toast_text_warning));
+                    return false;
+                }
+                boolean isAddition = false;
+                if (mMemo == null) {
+                    isAddition = true;
+                }
+                saveDataOnDatabase();
+
+                Intent intent = new Intent();
+                intent.putExtra("memoid", mMemoId);
+                if (isAddition) {
+                    setResult(Constant.ResultCodes.ADDED, intent);
+                } else {
+                    setResult(Constant.ResultCodes.UPDATED, intent);
+                }
                 finish();
                 break;
         }
@@ -157,13 +218,13 @@ public class MemoUpdateActivity extends AppCompatActivity {
                     Logger.debug(TAG, "PhotoPath is null");
                     return;
                 }
-                Image image = new Image(photoPathForGallery);
-                mPhotoAdapter.insertImage(image);
+                Image image = new Image(0, 0, photoPathForGallery);
+                addImage(image);
             }
         } else if (requestCode == REQUEST_CODE_CAMERA) {
             if (resultCode == RESULT_OK) {
-                Image image = new Image(mPhotoPathFromCamera);
-                mPhotoAdapter.insertImage(image);
+                Image image = new Image(0, 0, mPhotoPathFromCamera);
+                addImage(image);
             }
         }
     }
@@ -178,6 +239,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setResult(Constant.ResultCodes.CANCELLED);
                     finish();
                 }
             });
@@ -191,8 +253,56 @@ public class MemoUpdateActivity extends AppCompatActivity {
     private AlertDialog createDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle(getResources().getString(R.string.dialog_back_description));
-        dialogBuilder.setPositiveButton(getResources().getString(R.string.dialog_back_button), null);
-        dialogBuilder.setNegativeButton(getResources().getString(R.string.dialog_negative_button), null);
+        dialogBuilder.setPositiveButton(getResources().getString(R.string.dialog_back_button),
+                null);
+        dialogBuilder.setNegativeButton(getResources().getString(R.string.dialog_negative_button)
+                , null);
         return dialogBuilder.create();
+    }
+
+    private void addImage(Image image) {
+        mImagesInserted.add(image);
+        mPhotoAdapter.addImage(image);
+    }
+
+    private void removeImage(Image image) {
+        if (image.getImageId() == 0) {
+            mImagesInserted.remove(image);
+        } else {
+            mImagesDeleted.add(image);
+        }
+        mPhotoAdapter.removeImage(image);
+    }
+
+    private boolean isContentFilled() {
+        if (mTitleEditText.getText() == null || mContentEditText.getText() == null) {
+            return false;
+        }
+        String title = mTitleEditText.getText().toString();
+        String content= mContentEditText.getText().toString();
+        return (title.length() > 0 || content.length() > 0);
+    }
+
+    private void saveDataOnDatabase() {
+        String title = mTitleEditText.getText().toString();
+        String content = mContentEditText.getText().toString();
+        long timestamp = System.currentTimeMillis();
+
+        if (mMemo == null) {
+            mMemo = new Memo(0, title, content, timestamp);
+            mMemoId = mMemoDao.insertMemo(mMemo);
+        } else {
+            mMemoId = mMemo.getId();
+            mMemo = new Memo(mMemoId, title, content, timestamp);
+            mMemoDao.updateMemo(mMemo);
+        }
+
+        for (Image image : mImagesInserted) {
+            if (image != null) {
+                image.setMemoId(mMemoId);
+            }
+        }
+        mImageDao.insertImages(mImagesInserted);
+        mImageDao.deleteImages(mImagesDeleted);
     }
 }

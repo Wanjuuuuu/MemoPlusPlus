@@ -27,17 +27,33 @@ import java.util.List;
 
 public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.PhotoHolder> {
 
+    public interface OnRemoveListener {
+        void onRemove(Image image);
+    }
+
     private static final String TAG = EditPhotoAdapter.class.getSimpleName();
 
     private Context mContext;
     private List<Image> mImageList;
+    private OnRemoveListener mRemoveListener;
 
     public EditPhotoAdapter(Context context) {
         mContext = context;
         mImageList = new ArrayList<>();
     }
 
-    public void insertImage(Image image) {
+    public void setOnRemoveListener(OnRemoveListener removeListener) {
+        mRemoveListener = removeListener;
+    }
+
+    public void initImages(List<Image> images) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        mImageList.addAll(images);
+    }
+
+    public void addImage(Image image) {
         if (image == null) {
             return;
         }
@@ -45,13 +61,13 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
         notifyItemInserted(getItemCount() - 1);
     }
 
-    public void insertImages(List<Image> images) {
-        if (images == null || images.isEmpty()) {
+    public void removeImage(Image image) {
+        if (image == null) {
             return;
         }
-        int positionStart = getItemCount();
-        mImageList.addAll(images);
-        notifyItemRangeInserted(positionStart, images.size());
+        int position = mImageList.indexOf(image);
+        mImageList.remove(position);
+        notifyItemRemoved(position);
     }
 
     @NonNull
@@ -75,16 +91,7 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
         return mImageList.size();
     }
 
-    private void removeImage(Image image) {
-        if (image == null) {
-            return;
-        }
-        int position = mImageList.indexOf(image);
-        mImageList.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class PhotoHolder extends RecyclerView.ViewHolder {
 
         private ImageView mPhotoView;
         private Image mImage;
@@ -93,7 +100,14 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
             super(view);
             mPhotoView = view.findViewById(R.id.update_image_view);
             ImageButton clearButton = view.findViewById(R.id.clear_image_button);
-            clearButton.setOnClickListener(this);
+            clearButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mRemoveListener != null) {
+                        mRemoveListener.onRemove(mImage);
+                    }
+                }
+            });
         }
 
         private void bind(Image image) {
@@ -109,7 +123,9 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
                     if (e != null) {
                         Logger.debug(TAG, e.getMessage());
                     }
-                    removeImage(mImage);
+                    if (mRemoveListener != null) {
+                        mRemoveListener.onRemove(mImage);
+                    }
 
                     Toast.makeText(mContext, mContext.getString(R.string.toast_glide_error),
                             Toast.LENGTH_LONG).show();
@@ -124,11 +140,6 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
                     return false;
                 }
             }).into(mPhotoView);
-        }
-
-        @Override
-        public void onClick(View v) {
-            removeImage(mImage);
         }
     }
 }

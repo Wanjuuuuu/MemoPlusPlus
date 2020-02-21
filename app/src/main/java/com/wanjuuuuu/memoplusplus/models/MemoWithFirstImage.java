@@ -6,21 +6,21 @@ import androidx.room.Embedded;
 public class MemoWithFirstImage {
 
     @Embedded
-    private MemoEntity memo;
+    private Memo memo;
 
     @Embedded
-    private ImageEntity firstImage;
+    private Image firstImage;
 
-    public MemoWithFirstImage(@NonNull MemoEntity memo, @NonNull ImageEntity firstImage) {
+    public MemoWithFirstImage(@NonNull Memo memo, Image firstImage) {
         this.memo = memo;
         this.firstImage = firstImage;
     }
 
-    public MemoEntity getMemo() {
+    public Memo getMemo() {
         return memo;
     }
 
-    public ImageEntity getFirstImage() {
+    public Image getFirstImage() {
         return firstImage;
     }
 }

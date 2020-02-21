@@ -3,6 +3,7 @@ package com.wanjuuuuu.memoplusplus.models;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -11,14 +12,11 @@ import java.util.List;
 public interface ImageDao {
 
     @Query("SELECT * FROM image where image.memoid = :memoId")
-    List<ImageEntity> getImages(int memoId);
+    List<Image> getImages(long memoId);
 
-    @Insert
-    void insertImages(List<ImageEntity> images);
-
-    @Delete
-    void deleteImages(List<ImageEntity> images);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long[] insertImages(List<Image> images);
 
     @Delete
-    void deleteImage(ImageEntity image);
+    void deleteImages(List<Image> images);
 }

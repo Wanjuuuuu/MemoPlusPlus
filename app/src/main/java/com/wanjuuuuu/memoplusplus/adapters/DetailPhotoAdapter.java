@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.models.Image;
 
@@ -25,13 +26,12 @@ public class DetailPhotoAdapter extends RecyclerView.Adapter<DetailPhotoAdapter.
         mImageList = new ArrayList<>();
     }
 
-    public void insertImages(List<Image> images) {
-        if (images == null || images.isEmpty()) {
-            return;
+    public void setImages(List<Image> images) {
+        mImageList.clear();
+        if (images != null && !images.isEmpty()) {
+            mImageList.addAll(images);
         }
-//        int positionStart = getItemCount();
-        mImageList.addAll(images);
-//        notifyItemRangeInserted(positionStart, images.size());
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -62,11 +62,12 @@ public class DetailPhotoAdapter extends RecyclerView.Adapter<DetailPhotoAdapter.
         }
 
         private void bind(Image image) {
-            if (image == null) {
-                return;
+            String path = "";
+            if (image != null && image.getPath() != null) {
+                path = image.getPath();
             }
-            // handle mPhotoView
-            // Glide.error(R.drawable.ic_error)?
+            Glide.with(mContext).load(path)
+                    .error(mContext.getResources().getDrawable(R.drawable.ic_error)).into(mPhotoView);
         }
     }
 }
