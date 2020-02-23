@@ -134,6 +134,7 @@ public class MemoDetailActivity extends AppCompatActivity {
                     return;
                 }
                 mMemoAdapter.setMemo(mMemo);
+                mRecyclerView.smoothScrollToPosition(0);
             }
         }
     }

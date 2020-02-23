@@ -237,6 +237,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
     private void addImage(Image image) {
         mImagesInserted.add(image);
         mMemoAdapter.addImage(image);
+        mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
     }
 
     private void removeImage(Image image) {
