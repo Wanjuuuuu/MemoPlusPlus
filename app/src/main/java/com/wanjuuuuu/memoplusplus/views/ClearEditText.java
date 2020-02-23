@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.utils.ResourceManager;
@@ -38,16 +39,21 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
 
     private void init() {
         mClearButton = getContext().getDrawable(R.drawable.ic_cancel);
-        mClearButton.setBounds(0, 0, mClearButton.getIntrinsicWidth(),
-                mClearButton.getIntrinsicHeight());
-        setButtonVisible(false);
+        if (mClearButton != null) {
+            mClearButton.setBounds(0, 0, mClearButton.getIntrinsicWidth(),
+                    mClearButton.getIntrinsicHeight());
+            setButtonVisible(false);
+        }
 
         setPadding(0, 0, 0, 0);
+
         setBackground(getContext().getDrawable(R.drawable.border));
         setTextColor(ResourceManager.getColor(getContext(), R.color.text_color));
         setHintTextColor(ResourceManager.getColor(getContext(), R.color.edit_text_hint_color));
         setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.update_title_size));
+
+        setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         addTextChangedListener(new TextWatcher() {
             @Override
@@ -83,7 +89,8 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         int x = (int) motionEvent.getX();
-        if (mClearButton.isVisible() && x > getWidth() - getPaddingRight() - mClearButton.getIntrinsicWidth()) {
+        if (mClearButton != null && mClearButton.isVisible()
+                && x > getWidth() - getPaddingRight() - mClearButton.getIntrinsicWidth()) {
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 setText("");
                 setHint(getHint());
@@ -94,6 +101,9 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
     }
 
     private void setButtonVisible(boolean needVisible) {
+        if (mClearButton == null) {
+            return;
+        }
         mClearButton.setVisible(needVisible, false);
         setCompoundDrawables(null, null, needVisible ? mClearButton : null, null);
     }
