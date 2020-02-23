@@ -167,7 +167,7 @@ public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
 
                     Toast.makeText(mContext, mContext.getString(R.string.toast_load_photo_error),
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                     return true;
                 }
 

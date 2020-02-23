@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
-import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;

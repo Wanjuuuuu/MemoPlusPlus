@@ -26,19 +26,6 @@ public interface MemoDao {
             ") AS together GROUP BY together.id ORDER BY together.modifytimestamp")
     LiveData<List<MemoWithFirstImage>> getAllMemoWithFirstImage();
 
-    @Transaction
-    @Query("SELECT * FROM (\n" +
-            "SELECT memo.*, image.* FROM memo\n" +
-            "JOIN image ON image.imageid = (SELECT imageid FROM image WHERE memoid = :id LIMIT 1)" +
-            "\n" +
-            "WHERE memo.id = :id\n" +
-            "UNION\n" +
-            "SELECT memo.*, CAST(NULL AS INT), CAST(NULL AS INT), CAST(NULL AS STRING) FROM " +
-            "memo\n" +
-            "WHERE memo.id = :id\n" +
-            ") AS together GROUP BY together.id")
-    LiveData<MemoWithFirstImage> getMemoWithFirstImage(long id);
-
     @Query("SELECT * FROM memo WHERE memo.id = :id")
     LiveData<Memo> getMemo(long id);
 

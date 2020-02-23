@@ -91,8 +91,7 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         if (PermissionManager.isDenied(grantResults)) {
             Toast.makeText(this, getString(R.string.toast_all_permission_warning),
-                    Toast.LENGTH_LONG).show();
-            finish();
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }

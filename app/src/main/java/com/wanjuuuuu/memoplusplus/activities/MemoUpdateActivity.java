@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -124,12 +125,20 @@ public class MemoUpdateActivity extends AppCompatActivity {
                 inputDialog.setPositiveListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String mPhotoPathFromlinkUrl = inputDialog.getLinkUrl();
-                        if (mPhotoPathFromlinkUrl == null || mPhotoPathFromlinkUrl.length() == 0) {
+                        String mPhotoPathFromLinkUrl = inputDialog.getLinkUrl();
+                        if (mPhotoPathFromLinkUrl == null || mPhotoPathFromLinkUrl.length() == 0) {
                             showToast(getString(R.string.toast_dialog_warning));
                             return;
                         }
-                        Image image = new Image(0, 0, mPhotoPathFromlinkUrl);
+                        if (!PermissionManager.isInternetConnected(MemoUpdateActivity.this)) {
+                            showToast(getString(R.string.toast_dialog_internet_warning));
+                            return;
+                        }
+                        if (!URLUtil.isNetworkUrl(mPhotoPathFromLinkUrl)) {
+                            showToast(getString(R.string.toast_dialog_scheme_warning));
+                            return;
+                        }
+                        Image image = new Image(0, 0, mPhotoPathFromLinkUrl);
                         addImage(image);
                         inputDialog.dismiss();
                     }
@@ -223,7 +232,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
     }
 
     private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private AlertDialog createDialog() {
