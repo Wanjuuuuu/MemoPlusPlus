@@ -1,8 +1,8 @@
 package com.wanjuuuuu.memoplusplus.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,21 +18,14 @@ import com.wanjuuuuu.memoplusplus.adapters.PreviewMemoAdapter;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
-import com.wanjuuuuu.memoplusplus.utils.Constant;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE_DETAIL = 100;
-    private static final int REQUEST_CODE_ADD = 101;
-
     private RecyclerView mRecyclerView;
     private PreviewMemoAdapter mMemoAdapter;
-
-    private MemoDao mMemoDao;
-    private MemoWithFirstImage mMemoClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +36,6 @@ public class MainActivity extends AppCompatActivity {
         // request necessary Permissions to use app
         PermissionManager.requestAll(this);
 
-        // get memos from database
-        mMemoDao = MemoPlusDatabase.getInstance(this).memoDao();
-        List<MemoWithFirstImage> memos = mMemoDao.getAllMemoWithFirstImage();
-
         mMemoAdapter = new PreviewMemoAdapter(this);
         mMemoAdapter.setOnClickListener(new PreviewMemoAdapter.OnClickListener() {
             @Override
@@ -54,19 +43,31 @@ public class MainActivity extends AppCompatActivity {
                 if (memo == null || memo.getMemo() == null) {
                     return;
                 }
-                mMemoClicked = memo;
                 Intent intent = new Intent(MainActivity.this, MemoDetailActivity.class);
                 intent.putExtra("memo", memo.getMemo());
-                startActivityForResult(intent, REQUEST_CODE_DETAIL);
+                startActivity(intent);
             }
         });
-        mMemoAdapter.initMemos(memos);
         mRecyclerView.setAdapter(mMemoAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
+
+        // get memos from database
+        MemoDao memoDao = MemoPlusDatabase.getInstance(this).memoDao();
+        memoDao.getAllMemoWithFirstImage().observe(this, new Observer<List<MemoWithFirstImage>>() {
+            @Override
+            public void onChanged(List<MemoWithFirstImage> memoWithFirstImages) {
+                int previousItemCount = mMemoAdapter.getItemCount();
+                mMemoAdapter.setMemos(memoWithFirstImages);
+                // memo is added or updated
+                if (mMemoAdapter.getItemCount() >= previousItemCount) {
+                    mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
+                }
+            }
+        });
     }
 
     @Override
@@ -80,42 +81,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.add_memo_menu) {
             Intent intent = new Intent(this, MemoUpdateActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_ADD);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        MemoWithFirstImage newMemo = null;
-        if (data != null) {
-            long memoId = data.getLongExtra("memoid", 0);
-            newMemo = mMemoDao.getMemoWithFristImage(memoId);
-        }
-
-        if (requestCode == REQUEST_CODE_ADD) {
-            if (resultCode == Constant.ResultCodes.ADDED) {
-                if (newMemo != null) {
-                    mMemoAdapter.addMemo(newMemo);
-                    mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
-                }
-            }
-        } else if (requestCode == REQUEST_CODE_DETAIL) {
-            if (mMemoClicked == null) {
-                return;
-            }
-            if (resultCode == Constant.ResultCodes.DELETED) {
-                mMemoAdapter.removeMemo(mMemoClicked);
-            } else if (resultCode == Constant.ResultCodes.UPDATED) {
-                mMemoAdapter.removeMemo(mMemoClicked);
-                if (newMemo != null) {
-                    mMemoAdapter.addMemo(newMemo);
-                    mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
-                }
-            }
-        }
     }
 
     @Override

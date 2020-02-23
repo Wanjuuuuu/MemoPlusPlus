@@ -3,6 +3,7 @@ package com.wanjuuuuu.memoplusplus.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,33 +15,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
+import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
-import com.wanjuuuuu.memoplusplus.utils.Constant;
-import com.wanjuuuuu.memoplusplus.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MemoDetailActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE_UPDATE = 102;
+    private static final int REQUEST_CODE_UPDATE = 100;
 
     private RecyclerView mRecyclerView;
     private DetailMemoAdapter mMemoAdapter;
-
     private MemoDao mMemoDao;
     private ImageDao mImageDao;
     private Memo mMemo;
     private ArrayList<Image> mImages;
-    private boolean mIsUpdated;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,15 +65,19 @@ public class MemoDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
-        Logger.debug("MemoDetailActitivy", " " + mMemo.getModifyTimestamp());
+        mMemoAdapter.setMemo(mMemo);
 
         // get images from database
         MemoPlusDatabase database = MemoPlusDatabase.getInstance(this);
         mMemoDao = database.memoDao();
         mImageDao = database.imageDao();
-        mImages = new ArrayList<>(mImageDao.getImages(mMemo.getId()));
-
-        updateMemoDetail();
+        mImageDao.getImages(mMemo.getId()).observe(this, new Observer<List<Image>>() {
+            @Override
+            public void onChanged(List<Image> images) {
+                mImages = new ArrayList<>(images);
+                mMemoAdapter.setImages(mImages);
+            }
+        });
     }
 
     @Override
@@ -105,14 +109,7 @@ public class MemoDetailActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-
-                            mImageDao.deleteImages(mImages);
-                            mMemoDao.deleteMemo(mMemo);
-
-                            Intent intent = new Intent();
-                            intent.putExtra("memoid", mMemo.getId());
-                            setResult(Constant.ResultCodes.DELETED, intent);
-                            finish();
+                            removeMemoAndFinishActivity();
                         }
                     });
                 }
@@ -126,44 +123,26 @@ public class MemoDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_UPDATE) {
-            if (resultCode == Constant.ResultCodes.UPDATED) {
+            if (resultCode == RESULT_OK) {
                 if (data == null) {
                     return;
                 }
                 long memoId = data.getLongExtra("memoid", 0);
                 if (memoId == 0) {
                     showToast(getString(R.string.toast_load_memo_error));
-                    setResult(Constant.ResultCodes.FAILED);
                     finish();
                     return;
                 }
 
-                mMemo = mMemoDao.getMemo(memoId);
-                mImages = new ArrayList<>(mImageDao.getImages(memoId));
-
-                updateMemoDetail();
-                mIsUpdated = true;
-            } else if (resultCode == Constant.ResultCodes.FAILED) {
-                setResult(Constant.ResultCodes.FAILED);
-                finish();
+                mMemoDao.getMemo(memoId).observe(this, new Observer<Memo>() {
+                    @Override
+                    public void onChanged(Memo memo) {
+                        mMemo = memo;
+                        mMemoAdapter.setMemo(mMemo);
+                    }
+                });
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra("memoid", mMemo.getId());
-        if (mIsUpdated) {
-            setResult(Constant.ResultCodes.UPDATED, intent);
-        } else {
-            setResult(Constant.ResultCodes.CANCELLED);
-        }
-        finish();
-    }
-
-    private void updateMemoDetail() {
-        mMemoAdapter.setItems(mMemo, mImages);
     }
 
     private void showToast(String message) {
@@ -178,5 +157,22 @@ public class MemoDetailActivity extends AppCompatActivity {
         dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button),
                 null);
         return dialogBuilder.create();
+    }
+
+    private void removeMemoAndFinishActivity() {
+        DatabaseManager.executeTransaction(new Runnable() {
+            @Override
+            public void run() {
+                mImageDao.deleteImages(mImages);
+                mMemoDao.deleteMemo(mMemo);
+                Handler handler = new Handler(getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                });
+            }
+        });
     }
 }

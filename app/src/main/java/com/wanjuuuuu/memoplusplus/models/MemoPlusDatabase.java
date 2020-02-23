@@ -18,7 +18,7 @@ public abstract class MemoPlusDatabase extends RoomDatabase {
             synchronized (MemoPlusDatabase.class) {
                 if (mInstance == null) {
                     mInstance = Room.databaseBuilder(context.getApplicationContext(),
-                            MemoPlusDatabase.class, DATABASE_FILENAME).allowMainThreadQueries().build();
+                            MemoPlusDatabase.class, DATABASE_FILENAME).build();
                 }
             }
         }

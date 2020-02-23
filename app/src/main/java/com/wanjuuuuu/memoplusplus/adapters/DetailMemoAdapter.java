@@ -38,11 +38,15 @@ public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mImageList = new ArrayList<>();
     }
 
-    public void setItems(Memo memo, List<Image> images) {
-        if (memo != null) {
-            mMemo = memo;
+    public void setMemo(Memo memo) {
+        if (memo == null) {
+            return;
         }
+        mMemo = memo;
+        notifyItemChanged(TYPE_HEADER);
+    }
 
+    public void setImages(List<Image> images) {
         mImageList.clear();
         if (images != null && !images.isEmpty()) {
             mImageList.addAll(images);
@@ -113,6 +117,10 @@ public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         private void bind(Memo memo) {
+            if (memo == null) {
+                return;
+            }
+
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeZone(TIME_ZONE);
             calendar.setTimeInMillis(memo.getModifyTimestamp());

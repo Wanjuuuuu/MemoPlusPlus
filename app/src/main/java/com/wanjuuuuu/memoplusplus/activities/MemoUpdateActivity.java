@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,12 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
+import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
-import com.wanjuuuuu.memoplusplus.utils.Constant;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
@@ -39,8 +40,6 @@ import java.util.List;
 
 public class MemoUpdateActivity extends AppCompatActivity {
 
-    private static final String TAG = MemoUpdateActivity.class.getSimpleName();
-
     private static final String[] PERMISSIONS_FOR_GALLERY = {
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
@@ -48,19 +47,17 @@ public class MemoUpdateActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
 
-    private static final int REQUEST_CODE_GALLERY = 103;
-    private static final int REQUEST_CODE_CAMERA = 104;
+    private static final int REQUEST_CODE_GALLERY = 101;
+    private static final int REQUEST_CODE_CAMERA = 102;
 
     private RecyclerView mRecyclerView;
     private UpdateMemoAdapter mMemoAdapter;
-
     private MemoDao mMemoDao;
     private ImageDao mImageDao;
     private Memo mMemo;
     private List<Image> mImagesInserted;
     private List<Image> mImagesDeleted;
     private String mPhotoPathFromCamera;
-    private long mMemoId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,7 +92,6 @@ public class MemoUpdateActivity extends AppCompatActivity {
         mMemo = bundle.getParcelable("memo");
         if (mMemo == null) {
             showToast(getString(R.string.toast_update_memo_error));
-            setResult(Constant.ResultCodes.FAILED);
             finish();
             return;
         }
@@ -144,20 +140,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
                     showToast(getString(R.string.toast_text_warning));
                     return false;
                 }
-                boolean isAddition = false;
-                if (mMemo == null) {
-                    isAddition = true;
-                }
-                saveDataOnDatabase();
-
-                Intent intent = new Intent();
-                intent.putExtra("memoid", mMemoId);
-                if (isAddition) {
-                    setResult(Constant.ResultCodes.ADDED, intent);
-                } else {
-                    setResult(Constant.ResultCodes.UPDATED, intent);
-                }
-                finish();
+                saveMemoAndFinishActivity();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -177,7 +160,8 @@ public class MemoUpdateActivity extends AppCompatActivity {
             if (intent.resolveActivity(getPackageManager()) == null) {
                 return;
             }
-            startActivityForResult(Intent.createChooser(intent, "안녕"), REQUEST_CODE_GALLERY);
+            startActivityForResult(Intent.createChooser(intent,
+                    getString(R.string.photo_from_gallery)), REQUEST_CODE_GALLERY);
         } else if (requestCode == PermissionManager.REQUEST_CODE_CAMERA) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(getPackageManager()) == null) {
@@ -232,7 +216,6 @@ public class MemoUpdateActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    setResult(Constant.ResultCodes.CANCELLED);
                     finish();
                 }
             });
@@ -269,28 +252,45 @@ public class MemoUpdateActivity extends AppCompatActivity {
         return mMemoAdapter.isContentFilled();
     }
 
-    private void saveDataOnDatabase() {
-        String title = mMemoAdapter.getTitle();
-        String content = mMemoAdapter.getContent();
-        long timestamp = System.currentTimeMillis();
+    private void saveMemoAndFinishActivity() {
+        DatabaseManager.executeTransaction(new Runnable() {
+            @Override
+            public void run() {
+                String title = mMemoAdapter.getTitle();
+                String content = mMemoAdapter.getContent();
+                long timestamp = System.currentTimeMillis();
 
-        if (mMemo == null) {
-            mMemo = new Memo(0, title, content, timestamp);
-            mMemoId = mMemoDao.insertMemo(mMemo);
-        } else {
-            mMemoId = mMemo.getId();
-            mMemo = new Memo(mMemoId, title, content, timestamp);
-            mMemoDao.updateMemo(mMemo);
-        }
+                final long memoId;
+                if (mMemo == null) {
+                    mMemo = new Memo(0, title, content, timestamp);
+                    memoId = mMemoDao.insertMemo(mMemo);
+                } else {
+                    memoId = mMemo.getId();
+                    mMemo = new Memo(memoId, title, content, timestamp);
+                    mMemoDao.updateMemo(mMemo);
+                }
 
-        List<Image> newImages = new ArrayList<>();
-        for (Image image : mImagesInserted) {
-            if (image != null) {
-                Image newImage = new Image(image.getImageId(), mMemoId, image.getPath());
-                newImages.add(newImage);
+                List<Image> newImages = new ArrayList<>();
+                for (Image image : mImagesInserted) {
+                    if (image != null) {
+                        Image newImage = new Image(image.getImageId(), memoId, image.getPath());
+                        newImages.add(newImage);
+                    }
+                }
+                mImageDao.insertImages(newImages);
+                mImageDao.deleteImages(mImagesDeleted);
+
+                Handler handler = new Handler(getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent();
+                        intent.putExtra("memoid", memoId);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                });
             }
-        }
-        mImageDao.insertImages(newImages);
-        mImageDao.deleteImages(mImagesDeleted);
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.wanjuuuuu.memoplusplus.models;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -23,7 +24,7 @@ public interface MemoDao {
             "memo\n" +
             "WHERE NOT EXISTS (SELECT imageid FROM image WHERE memoid = memo.id)\n" +
             ") AS together GROUP BY together.id ORDER BY together.modifytimestamp")
-    List<MemoWithFirstImage> getAllMemoWithFirstImage();
+    LiveData<List<MemoWithFirstImage>> getAllMemoWithFirstImage();
 
     @Transaction
     @Query("SELECT * FROM (\n" +
@@ -36,10 +37,10 @@ public interface MemoDao {
             "memo\n" +
             "WHERE memo.id = :id\n" +
             ") AS together GROUP BY together.id")
-    MemoWithFirstImage getMemoWithFristImage(long id);
+    LiveData<MemoWithFirstImage> getMemoWithFirstImage(long id);
 
     @Query("SELECT * FROM memo WHERE memo.id = :id")
-    Memo getMemo(long id);
+    LiveData<Memo> getMemo(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertMemo(Memo memo);

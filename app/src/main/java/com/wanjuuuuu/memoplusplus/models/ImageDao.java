@@ -1,5 +1,6 @@
 package com.wanjuuuuu.memoplusplus.models;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -12,7 +13,7 @@ import java.util.List;
 public interface ImageDao {
 
     @Query("SELECT * FROM image where image.memoid = :memoId")
-    List<Image> getImages(long memoId);
+    LiveData<List<Image>> getImages(long memoId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insertImages(List<Image> images);

@@ -38,28 +38,13 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
         mClickListener = clickListener;
     }
 
-    public void initMemos(List<MemoWithFirstImage> memos) {
+    public void setMemos(List<MemoWithFirstImage> memos) {
+        mMemoList.clear();
         if (memos == null || memos.isEmpty()) {
             return;
         }
         mMemoList.addAll(memos);
-    }
-
-    public void addMemo(MemoWithFirstImage memo) {
-        if (memo == null) {
-            return;
-        }
-        mMemoList.add(memo);
-        notifyItemInserted(getItemCount() - 1);
-    }
-
-    public void removeMemo(MemoWithFirstImage memo) {
-        if (memo == null) {
-            return;
-        }
-        int position = mMemoList.indexOf(memo);
-        mMemoList.remove(memo);
-        notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     @NonNull
