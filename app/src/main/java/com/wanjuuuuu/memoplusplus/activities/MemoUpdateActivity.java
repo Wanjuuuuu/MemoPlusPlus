@@ -256,41 +256,49 @@ public class MemoUpdateActivity extends AppCompatActivity {
         DatabaseManager.executeTransaction(new Runnable() {
             @Override
             public void run() {
-                String title = mMemoAdapter.getTitle();
-                String content = mMemoAdapter.getContent();
-                long timestamp = System.currentTimeMillis();
+                final boolean isUpdated = (mMemo != null);
 
-                final long memoId;
-                if (mMemo == null) {
-                    mMemo = new Memo(0, title, content, timestamp);
-                    memoId = mMemoDao.insertMemo(mMemo);
-                } else {
-                    memoId = mMemo.getId();
-                    mMemo = new Memo(memoId, title, content, timestamp);
-                    mMemoDao.updateMemo(mMemo);
-                }
-
-                List<Image> newImages = new ArrayList<>();
-                for (Image image : mImagesInserted) {
-                    if (image != null) {
-                        Image newImage = new Image(image.getImageId(), memoId, image.getPath());
-                        newImages.add(newImage);
-                    }
-                }
-                mImageDao.insertImages(newImages);
-                mImageDao.deleteImages(mImagesDeleted);
+                saveMemoOnDatabase();
 
                 Handler handler = new Handler(getMainLooper());
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent();
-                        intent.putExtra("memoid", memoId);
-                        setResult(RESULT_OK, intent);
+                        if (isUpdated) {
+                            Intent intent = new Intent();
+                            intent.putExtra("memo", mMemo);
+                            setResult(RESULT_OK, intent);
+                        }
                         finish();
                     }
                 });
             }
         });
+    }
+
+    private void saveMemoOnDatabase() {
+        String title = mMemoAdapter.getTitle();
+        String content = mMemoAdapter.getContent();
+        long timestamp = System.currentTimeMillis();
+
+        long memoId;
+        if (mMemo == null) {
+            mMemo = new Memo(0, title, content, timestamp);
+            memoId = mMemoDao.insertMemo(mMemo);
+        } else {
+            memoId = mMemo.getId();
+            mMemo = new Memo(memoId, title, content, timestamp);
+            mMemoDao.updateMemo(mMemo);
+        }
+
+        List<Image> newImages = new ArrayList<>();
+        for (Image image : mImagesInserted) {
+            if (image != null) {
+                Image newImage = new Image(image.getImageId(), memoId, image.getPath());
+                newImages.add(newImage);
+            }
+        }
+        mImageDao.insertImages(newImages);
+        mImageDao.deleteImages(mImagesDeleted);
     }
 }

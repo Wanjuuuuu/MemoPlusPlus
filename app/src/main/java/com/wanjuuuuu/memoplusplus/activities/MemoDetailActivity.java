@@ -127,20 +127,13 @@ public class MemoDetailActivity extends AppCompatActivity {
                 if (data == null) {
                     return;
                 }
-                long memoId = data.getLongExtra("memoid", 0);
-                if (memoId == 0) {
+                mMemo = data.getParcelableExtra("memo");
+                if (mMemo == null) {
                     showToast(getString(R.string.toast_load_memo_error));
                     finish();
                     return;
                 }
-
-                mMemoDao.getMemo(memoId).observe(this, new Observer<Memo>() {
-                    @Override
-                    public void onChanged(Memo memo) {
-                        mMemo = memo;
-                        mMemoAdapter.setMemo(mMemo);
-                    }
-                });
+                mMemoAdapter.setMemo(mMemo);
             }
         }
     }
@@ -169,6 +162,7 @@ public class MemoDetailActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        showToast(getString(R.string.toast_delete_memo));
                         finish();
                     }
                 });
