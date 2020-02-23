@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
                 int previousItemCount = mMemoAdapter.getItemCount();
                 mMemoAdapter.setMemos(memoWithFirstImages);
                 // memo is added or updated
-                if (mMemoAdapter.getItemCount() >= previousItemCount) {
-                    mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
+                int currentItemCount = mMemoAdapter.getItemCount();
+                if (currentItemCount > 0 && currentItemCount >= previousItemCount) {
+                    mRecyclerView.smoothScrollToPosition(currentItemCount - 1);
                 }
             }
         });
