@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,13 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
-import com.wanjuuuuu.memoplusplus.adapters.DetailPhotoAdapter;
+import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.utils.Constant;
+import com.wanjuuuuu.memoplusplus.utils.Logger;
 
 import java.util.ArrayList;
 
@@ -34,9 +34,7 @@ public class MemoDetailActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_UPDATE = 102;
 
     private RecyclerView mRecyclerView;
-    private DetailPhotoAdapter mPhotoAdapter;
-    private TextView mTitleView;
-    private TextView mContentView;
+    private DetailMemoAdapter mMemoAdapter;
 
     private MemoDao mMemoDao;
     private ImageDao mImageDao;
@@ -49,11 +47,9 @@ public class MemoDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_detail);
         mRecyclerView = findViewById(R.id.detail_photo_recycler_view);
-        mTitleView = findViewById(R.id.detail_title_text_view);
-        mContentView = findViewById(R.id.detail_content_text_view);
 
-        mPhotoAdapter = new DetailPhotoAdapter(this);
-        mRecyclerView.setAdapter(mPhotoAdapter);
+        mMemoAdapter = new DetailMemoAdapter(this);
+        mRecyclerView.setAdapter(mMemoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
@@ -69,6 +65,7 @@ public class MemoDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
+        Logger.debug("MemoDetailActitivy", " " + mMemo.getModifyTimestamp());
 
         // get images from database
         MemoPlusDatabase database = MemoPlusDatabase.getInstance(this);
@@ -166,9 +163,7 @@ public class MemoDetailActivity extends AppCompatActivity {
     }
 
     private void updateMemoDetail() {
-        mTitleView.setText(mMemo.getTitle());
-        mContentView.setText(mMemo.getContent());
-        mPhotoAdapter.setImages(mImages);
+        mMemoAdapter.setItems(mMemo, mImages);
     }
 
     private void showToast(String message) {

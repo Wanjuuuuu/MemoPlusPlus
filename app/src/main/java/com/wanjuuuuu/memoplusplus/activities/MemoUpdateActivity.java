@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
-import com.wanjuuuuu.memoplusplus.adapters.EditPhotoAdapter;
+import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
@@ -32,7 +31,6 @@ import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.utils.Constant;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
-import com.wanjuuuuu.memoplusplus.views.ClearEditText;
 import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
 
 import java.io.File;
@@ -54,9 +52,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CAMERA = 104;
 
     private RecyclerView mRecyclerView;
-    private EditPhotoAdapter mPhotoAdapter;
-    private ClearEditText mTitleEditText;
-    private ClearEditText mContentEditText;
+    private UpdateMemoAdapter mMemoAdapter;
 
     private MemoDao mMemoDao;
     private ImageDao mImageDao;
@@ -71,17 +67,15 @@ public class MemoUpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_update);
         mRecyclerView = findViewById(R.id.update_photo_recycler_view);
-        mTitleEditText = findViewById(R.id.update_title_edit_text);
-        mContentEditText = findViewById(R.id.update_content_edit_text);
 
-        mPhotoAdapter = new EditPhotoAdapter(this);
-        mPhotoAdapter.setOnRemoveListener(new EditPhotoAdapter.OnRemoveListener() {
+        mMemoAdapter = new UpdateMemoAdapter(this);
+        mMemoAdapter.setOnRemoveListener(new UpdateMemoAdapter.OnRemoveListener() {
             @Override
             public void onRemove(Image image) {
                 removeImage(image);
             }
         });
-        mRecyclerView.setAdapter(mPhotoAdapter);
+        mRecyclerView.setAdapter(mMemoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
@@ -105,11 +99,9 @@ public class MemoUpdateActivity extends AppCompatActivity {
             finish();
             return;
         }
-        mTitleEditText.setText(mMemo.getTitle());
-        mContentEditText.setText(mMemo.getContent());
 
         List<Image> images = bundle.getParcelableArrayList("images");
-        mPhotoAdapter.initImages(images);
+        mMemoAdapter.initItems(mMemo, images);
     }
 
     @Override
@@ -261,7 +253,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
     private void addImage(Image image) {
         mImagesInserted.add(image);
-        mPhotoAdapter.addImage(image);
+        mMemoAdapter.addImage(image);
     }
 
     private void removeImage(Image image) {
@@ -270,21 +262,16 @@ public class MemoUpdateActivity extends AppCompatActivity {
         } else {
             mImagesDeleted.add(image);
         }
-        mPhotoAdapter.removeImage(image);
+        mMemoAdapter.removeImage(image);
     }
 
     private boolean isContentFilled() {
-        if (mTitleEditText.getText() == null || mContentEditText.getText() == null) {
-            return false;
-        }
-        String title = mTitleEditText.getText().toString();
-        String content= mContentEditText.getText().toString();
-        return (title.length() > 0 || content.length() > 0);
+        return mMemoAdapter.isContentFilled();
     }
 
     private void saveDataOnDatabase() {
-        String title = mTitleEditText.getText().toString();
-        String content = mContentEditText.getText().toString();
+        String title = mMemoAdapter.getTitle();
+        String content = mMemoAdapter.getContent();
         long timestamp = System.currentTimeMillis();
 
         if (mMemo == null) {

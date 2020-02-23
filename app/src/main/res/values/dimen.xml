@@ -7,19 +7,18 @@
     <dimen name="preview_title_size">16sp</dimen>
     <dimen name="preview_content_size">12sp</dimen>
     <!--MemoDetailActivity-->
-    <dimen name="detail_layout_marginTop">26dp</dimen>
-    <dimen name="detail_layout_marginBottom">12dp</dimen>
+    <dimen name="detail_layout_marginTop">6dp</dimen>
     <dimen name="detail_item_marginBottom">10dp</dimen>
     <dimen name="detail_item_paddingTop">12dp</dimen>
     <dimen name="detail_item_paddingBottom">12dp</dimen>
     <dimen name="detail_item_paddingStart">16dp</dimen>
     <dimen name="detail_item_paddingEnd">16dp</dimen>
     <dimen name="detail_photo_maxHeight">200dp</dimen>
+    <dimen name="detail_date_size">14sp</dimen>
     <dimen name="detail_title_size">18sp</dimen>
     <dimen name="detail_content_size">16sp</dimen>
     <!--MemoUpdateActivity-->
-    <dimen name="update_layout_marginTop">26dp</dimen>
-    <dimen name="update_layout_marginBottom">12dp</dimen>
+    <dimen name="update_layout_marginTop">6dp</dimen>
     <dimen name="update_item_marginBottom">10dp</dimen>
     <dimen name="update_item_paddingTop">12dp</dimen>
     <dimen name="update_item_paddingBottom">12dp</dimen>

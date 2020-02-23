@@ -20,24 +20,30 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.models.Image;
+import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.utils.Logger;
+import com.wanjuuuuu.memoplusplus.views.ClearEditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.PhotoHolder> {
+public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface OnRemoveListener {
         void onRemove(Image image);
     }
 
-    private static final String TAG = EditPhotoAdapter.class.getSimpleName();
+    private static final String TAG = UpdateMemoAdapter.class.getSimpleName();
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_PHOTO = 1;
 
     private Context mContext;
+    private HeaderHolder mHeaderHolder;
+    private Memo mMemo;
     private List<Image> mImageList;
     private OnRemoveListener mRemoveListener;
 
-    public EditPhotoAdapter(Context context) {
+    public UpdateMemoAdapter(Context context) {
         mContext = context;
         mImageList = new ArrayList<>();
     }
@@ -46,7 +52,12 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
         mRemoveListener = removeListener;
     }
 
-    public void initImages(List<Image> images) {
+    public void initItems(Memo memo, List<Image> images) {
+        if (memo == null) {
+            return;
+        }
+        mMemo = memo;
+
         if (images == null || images.isEmpty()) {
             return;
         }
@@ -67,31 +78,59 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
         }
         int position = mImageList.indexOf(image);
         mImageList.remove(position);
-        notifyItemRemoved(position);
+        notifyItemRemoved(position + 1);
+    }
+
+    public boolean isContentFilled() {
+        return (getTitle().length() > 0 || getContent().length() > 0);
+    }
+
+    public String getTitle() {
+        if (mHeaderHolder == null) {
+            return "";
+        }
+        return mHeaderHolder.getTitle();
+    }
+
+    public String getContent() {
+        if (mHeaderHolder == null) {
+            return "";
+        }
+        return mHeaderHolder.getContent();
     }
 
     @NonNull
     @Override
-    public PhotoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
+            mHeaderHolder = new HeaderHolder(LayoutInflater.from(mContext).inflate(R.layout.edit_header_view, parent, false));
+            return mHeaderHolder;
+        }
         return new PhotoHolder(LayoutInflater.from(mContext).inflate(R.layout.edit_photo_view,
                 parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PhotoHolder holder, int position) {
-        if (mImageList.isEmpty()) {
-            return;
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof HeaderHolder) {
+            ((HeaderHolder) holder).bind(mMemo);
+        } else if (holder instanceof PhotoHolder) {
+            Image image = mImageList.get(position - 1);
+            ((PhotoHolder) holder).bind(image);
         }
-        Image image = mImageList.get(position);
-        holder.bind(image);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == TYPE_HEADER) ? TYPE_HEADER : TYPE_PHOTO;
     }
 
     @Override
     public int getItemCount() {
-        return mImageList.size();
+        return mImageList.size() + 1;
     }
 
-    class PhotoHolder extends RecyclerView.ViewHolder {
+    private class PhotoHolder extends RecyclerView.ViewHolder {
 
         private ImageView mPhotoView;
         private Image mImage;
@@ -140,6 +179,40 @@ public class EditPhotoAdapter extends RecyclerView.Adapter<EditPhotoAdapter.Phot
                     return false;
                 }
             }).into(mPhotoView);
+        }
+    }
+
+    private class HeaderHolder extends RecyclerView.ViewHolder {
+
+        private ClearEditText mTitleEditText;
+        private ClearEditText mContentEditText;
+
+        private HeaderHolder(View view) {
+            super(view);
+            mTitleEditText = view.findViewById(R.id.update_title_edit_text);
+            mContentEditText = view.findViewById(R.id.update_content_edit_text);
+        }
+
+        private void bind(Memo memo) {
+            if (memo == null) {
+                return;
+            }
+            mTitleEditText.setText(memo.getTitle());
+            mContentEditText.setText(memo.getContent());
+        }
+
+        private String getTitle() {
+            if (mTitleEditText.getText() == null) {
+                return "";
+            }
+            return mTitleEditText.getText().toString();
+        }
+
+        private String getContent() {
+            if (mContentEditText.getText() == null) {
+                return "";
+            }
+            return mContentEditText.getText().toString();
         }
     }
 }
