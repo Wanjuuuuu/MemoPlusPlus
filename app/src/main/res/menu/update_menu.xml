@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/update_complete_menu"
+        android:icon="@drawable/ic_done"
+        android:title="@string/update_complete_menu"
+        app:showAsAction="ifRoom" />
+
+    <group>
+        <item
+            android:id="@+id/photo_from_gallery_menu"
+            android:title="@string/photo_from_gallery" />
+        <item
+            android:id="@+id/photo_from_camera_menu"
+            android:title="@string/photo_from_camera" />
+        <item
+            android:id="@+id/photo_from_link_menu"
+            android:title="@string/photo_from_link" />
+    </group>
+
+
+</menu>

@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/themeColor</item>
+        <item name="colorPrimaryDark">@color/themeColor</item>
+        <item name="colorAccent">@color/themeColor</item>
+    </style>
+
+    <style name="MemoUpdateTheme" parent="AppTheme">
+        <item name="actionOverflowButtonStyle">@style/AddPhotoOverflowButton</item>
+    </style>
+
+    <style name="AddPhotoOverflowButton" parent="Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_add_photo_alternate</item>
+        <item name="android:background">?android:attr/actionBarItemBackground</item>
+        <item name="android:contentDescription">@string/update_photo_menu</item>
+    </style>
+</resources>

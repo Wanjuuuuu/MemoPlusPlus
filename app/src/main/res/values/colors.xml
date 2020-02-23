@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="themeColor">#ff00b900</color>
+
+    <color name="text_color">#ff1a1a1a</color>
+    <color name="light_text_color">#ff4f4f4f</color>
+
+    <color name="border_color">#ffefefef</color>
+    <color name="background_color">#ffefefef</color>
+    <color name="rectangle_outside_bg_color">#ffefefef</color>
+    <color name="rectangle_inside_bg_color">#ffffffff</color>
+
+    <color name="edit_text_hint_color">#ff00b900</color>
+
+    <color name="menu_icon_color">#ffffffff</color>
+    <color name="warning_icon_color">#ffed4c4c</color>
+</resources>
