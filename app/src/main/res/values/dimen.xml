@@ -5,7 +5,15 @@
     <dimen name="image_thumbnail_height">72dp</dimen>
     <dimen name="image_thumbnail_width">72dp</dimen>
     <dimen name="preview_title_size">16sp</dimen>
+    <dimen name="preview_title_marginTop">16dp</dimen>
     <dimen name="preview_content_size">12sp</dimen>
+    <dimen name="preview_content_marginTop">6dp</dimen>
+    <dimen name="preview_content_marginBottom">14dp</dimen>
+    <dimen name="preview_memo_marginStart">16dp</dimen>
+    <dimen name="preview_memo_marginEnd">16dp</dimen>
+    <dimen name="preview_image_marginEnd">12dp</dimen>
+    <integer name="preview_title_maxLines">1</integer>
+    <integer name="preview_content_maxLines">2</integer>
     <!--MemoDetailActivity-->
     <dimen name="detail_layout_marginTop">6dp</dimen>
     <dimen name="detail_item_marginBottom">10dp</dimen>
@@ -26,6 +34,11 @@
     <dimen name="update_item_paddingEnd">16dp</dimen>
     <dimen name="update_title_size">18sp</dimen>
     <dimen name="update_content_size">16sp</dimen>
+    <dimen name="update_image_marginTop">16dp</dimen>
+    <dimen name="update_image_marginBottom">16dp</dimen>
+    <dimen name="update_image_marginStart">16dp</dimen>
+    <dimen name="update_image_marginEnd">10dp</dimen>
+    <dimen name="update_button_marginEnd">12dp</dimen>
     <!--drawable-->
     <dimen name="border_width">0.5dp</dimen>
     <dimen name="border_radius">16dp</dimen>
