@@ -72,5 +72,6 @@ public final class Memo implements Parcelable {
         id = source.readLong();
         title = source.readString();
         content = source.readString();
+        modifyTimestamp = source.readLong();
     }
 }
