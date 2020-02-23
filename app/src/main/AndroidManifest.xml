@@ -42,7 +42,7 @@
             android:configChanges="orientation" />
         <activity
             android:name=".activities.MemoUpdateActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|keyboardHidden|keyboard"
             android:theme="@style/MemoUpdateTheme" />
     </application>
 
