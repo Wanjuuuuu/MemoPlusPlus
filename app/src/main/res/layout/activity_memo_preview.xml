@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_color"
     android:orientation="vertical"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.MemoPreviewActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/preview_memo_recycler_view"

@@ -22,7 +22,7 @@ import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MemoPreviewActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private PreviewMemoAdapter mMemoAdapter;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_memo_preview);
         mRecyclerView = findViewById(R.id.preview_memo_recycler_view);
 
         // request necessary Permissions to use app
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 if (memo == null || memo.getMemo() == null) {
                     return;
                 }
-                Intent intent = new Intent(MainActivity.this, MemoDetailActivity.class);
+                Intent intent = new Intent(MemoPreviewActivity.this, MemoDetailActivity.class);
                 intent.putExtra("memo", memo.getMemo());
                 startActivity(intent);
             }

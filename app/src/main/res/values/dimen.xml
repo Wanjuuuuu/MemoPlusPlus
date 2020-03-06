@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--MainActivity-->
+    <!--MemoPreviewActivity-->
     <dimen name="preview_memo_height">92dp</dimen>
     <dimen name="image_thumbnail_height">72dp</dimen>
     <dimen name="image_thumbnail_width">72dp</dimen>
