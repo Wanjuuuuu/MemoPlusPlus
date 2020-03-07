@@ -3,7 +3,6 @@ package com.wanjuuuuu.memoplusplus.adapters;
 import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;

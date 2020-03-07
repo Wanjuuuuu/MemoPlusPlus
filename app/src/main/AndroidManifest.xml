@@ -29,7 +29,7 @@
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
         <activity
-            android:name=".activities.MemoPreviewActivity"
+            android:name=".MemoPreviewActivity"
             android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,10 +38,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MemoDetailActivity"
+            android:name=".MemoDetailActivity"
             android:configChanges="orientation" />
         <activity
-            android:name=".activities.MemoUpdateActivity"
+            android:name=".MemoUpdateActivity"
             android:configChanges="orientation|keyboardHidden|keyboard"
             android:theme="@style/MemoUpdateTheme" />
     </application>

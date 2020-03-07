@@ -1,10 +1,7 @@
-package com.wanjuuuuu.memoplusplus.activities;
+package com.wanjuuuuu.memoplusplus;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
@@ -14,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.PreviewMemoAdapter;
 import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoPreviewBinding;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
@@ -23,16 +19,29 @@ import com.wanjuuuuu.memoplusplus.viewmodels.PreviewViewModel;
 
 import java.util.List;
 
-public class MemoPreviewActivity extends AppCompatActivity {
+public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding,
+        PreviewViewModel> {
 
     private PreviewMemoAdapter mMemoAdapter;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.activity_memo_preview;
+    }
+
+    @Override
+    protected Class<PreviewViewModel> getViewModel() {
+        return PreviewViewModel.class;
+    }
+
+    @Override
+    protected int getBindingVariable() {
+        return 0;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final ActivityMemoPreviewBinding binding = DataBindingUtil.setContentView(this,
-                R.layout.activity_memo_preview);
 
         // request necessary Permissions to use app
         PermissionManager.requestAll(this);
@@ -49,23 +58,22 @@ public class MemoPreviewActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        binding.previewMemoRecyclerView.setAdapter(mMemoAdapter);
+        mBinding.previewMemoRecyclerView.setAdapter(mMemoAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
-        binding.previewMemoRecyclerView.setLayoutManager(layoutManager);
+        mBinding.previewMemoRecyclerView.setLayoutManager(layoutManager);
 
-        PreviewViewModel viewModel = new ViewModelProvider(this).get(PreviewViewModel.class);
-        viewModel.getAllMemos(this).observe(this, new Observer<List<MemoWithFirstImage>>() {
+        mViewModel.getAllMemos(this).observe(this, new Observer<List<MemoWithFirstImage>>() {
             @Override
             public void onChanged(List<MemoWithFirstImage> memoWithFirstImages) {
                 int previousItemCount = mMemoAdapter.getItemCount();
-                binding.setMemos(memoWithFirstImages);
+                mBinding.setMemos(memoWithFirstImages);
                 // memo is added or updated
                 int currentItemCount = mMemoAdapter.getItemCount();
                 if (currentItemCount > 0 && currentItemCount >= previousItemCount) {
-                    binding.previewMemoRecyclerView.smoothScrollToPosition(currentItemCount - 1);
+                    mBinding.previewMemoRecyclerView.smoothScrollToPosition(currentItemCount - 1);
                 }
             }
         });

@@ -65,7 +65,7 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return mMemoList.size();
     }
 
-    class MemoHolder extends RecyclerView.ViewHolder {
+    private class MemoHolder extends RecyclerView.ViewHolder {
 
         private PreviewMemoViewBinding mBinding;
 

@@ -1,4 +1,4 @@
-package com.wanjuuuuu.memoplusplus.activities;
+package com.wanjuuuuu.memoplusplus;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -17,13 +17,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
 import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoUpdateBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
@@ -37,7 +33,7 @@ import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
 import java.io.File;
 import java.util.List;
 
-public class MemoUpdateActivity extends AppCompatActivity {
+public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, UpdateViewModel> {
 
     private static final String[] PERMISSIONS_FOR_GALLERY = {
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -49,18 +45,28 @@ public class MemoUpdateActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_GALLERY = 101;
     private static final int REQUEST_CODE_CAMERA = 102;
 
-    private ActivityMemoUpdateBinding mBinding;
     private UpdateMemoAdapter mMemoAdapter;
-    private UpdateViewModel mViewModel;
-
     private Memo mMemo;
     private String mPhotoPathFromCamera;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.activity_memo_update;
+    }
+
+    @Override
+    protected Class<UpdateViewModel> getViewModel() {
+        return UpdateViewModel.class;
+    }
+
+    @Override
+    protected int getBindingVariable() {
+        return 0;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_memo_update);
 
         mMemoAdapter = new UpdateMemoAdapter(this);
         mMemoAdapter.setOnRemoveListener(new UpdateMemoAdapter.OnRemoveListener() {
@@ -72,8 +78,6 @@ public class MemoUpdateActivity extends AppCompatActivity {
         mBinding.updateMemoRecyclerView.setAdapter(mMemoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mBinding.updateMemoRecyclerView.setLayoutManager(layoutManager);
-
-        mViewModel = new ViewModelProvider(this).get(UpdateViewModel.class);
 
         Intent intent = getIntent();
         if (intent == null || intent.getExtras() == null) {

@@ -1,4 +1,4 @@
-package com.wanjuuuuu.memoplusplus.activities;
+package com.wanjuuuuu.memoplusplus;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,13 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
 import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoDetailBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
@@ -30,22 +26,31 @@ import com.wanjuuuuu.memoplusplus.viewmodels.DetailViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemoDetailActivity extends AppCompatActivity {
+public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, DetailViewModel> {
 
     private static final int REQUEST_CODE_UPDATE = 100;
-
-    private ActivityMemoDetailBinding mBinding;
-    private DetailViewModel mViewModel;
 
     private Memo mMemo;
     private ArrayList<Image> mImages;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.activity_memo_detail;
+    }
+
+    @Override
+    protected Class<DetailViewModel> getViewModel() {
+        return com.wanjuuuuu.memoplusplus.viewmodels.DetailViewModel.class;
+    }
+
+    @Override
+    protected int getBindingVariable() {
+        return 0;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mBinding = DataBindingUtil.setContentView(this,
-                R.layout.activity_memo_detail);
 
         DetailMemoAdapter memoAdapter = new DetailMemoAdapter(this);
         mBinding.detailMemoRecyclerView.setAdapter(memoAdapter);
@@ -66,7 +71,6 @@ public class MemoDetailActivity extends AppCompatActivity {
         }
         mBinding.setMemo(mMemo);
 
-        mViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
         mViewModel.getImages(this, mMemo.getId()).observe(this, new Observer<List<Image>>() {
             @Override
             public void onChanged(List<Image> images) {
