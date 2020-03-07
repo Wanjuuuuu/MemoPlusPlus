@@ -3,7 +3,6 @@ package com.wanjuuuuu.memoplusplus.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,17 +15,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
-import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
-import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
-import com.wanjuuuuu.memoplusplus.models.MemoDao;
-import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
+import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
+import com.wanjuuuuu.memoplusplus.viewmodels.DetailViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +35,8 @@ public class MemoDetailActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private DetailMemoAdapter mMemoAdapter;
-    private MemoDao mMemoDao;
-    private ImageDao mImageDao;
+    private DetailViewModel mViewModel;
+
     private Memo mMemo;
     private ArrayList<Image> mImages;
 
@@ -67,11 +65,8 @@ public class MemoDetailActivity extends AppCompatActivity {
         }
         mMemoAdapter.setMemo(mMemo);
 
-        // get images from database
-        MemoPlusDatabase database = MemoPlusDatabase.getInstance(this);
-        mMemoDao = database.memoDao();
-        mImageDao = database.imageDao();
-        mImageDao.getImages(mMemo.getId()).observe(this, new Observer<List<Image>>() {
+        mViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
+        mViewModel.getImages(this, mMemo.getId()).observe(this, new Observer<List<Image>>() {
             @Override
             public void onChanged(List<Image> images) {
                 mImages = new ArrayList<>(images);
@@ -109,7 +104,14 @@ public class MemoDetailActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            removeMemoAndFinishActivity();
+                            mViewModel.deleteMemoAndImages(MemoDetailActivity.this, mMemo,
+                                    new OnCompleteListener() {
+                                        @Override
+                                        public void onComplete() {
+                                            showToast(getString(R.string.toast_delete_memo));
+                                            finish();
+                                        }
+                                    });
                         }
                     });
                 }
@@ -151,23 +153,5 @@ public class MemoDetailActivity extends AppCompatActivity {
         dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button),
                 null);
         return dialogBuilder.create();
-    }
-
-    private void removeMemoAndFinishActivity() {
-        DatabaseManager.executeTransaction(new Runnable() {
-            @Override
-            public void run() {
-                mImageDao.deleteImages(mImages);
-                mMemoDao.deleteMemo(mMemo);
-                Handler handler = new Handler(getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showToast(getString(R.string.toast_delete_memo));
-                        finish();
-                    }
-                });
-            }
-        });
     }
 }

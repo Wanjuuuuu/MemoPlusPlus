@@ -3,6 +3,7 @@ package com.wanjuuuuu.memoplusplus.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,10 +16,9 @@ import android.widget.Toast;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.PreviewMemoAdapter;
-import com.wanjuuuuu.memoplusplus.models.MemoDao;
-import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
+import com.wanjuuuuu.memoplusplus.viewmodels.PreviewViewModel;
 
 import java.util.List;
 
@@ -55,9 +55,8 @@ public class MemoPreviewActivity extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        // get memos from database
-        MemoDao memoDao = MemoPlusDatabase.getInstance(this).memoDao();
-        memoDao.getAllMemoWithFirstImage().observe(this, new Observer<List<MemoWithFirstImage>>() {
+        PreviewViewModel viewModel = new ViewModelProvider(this).get(PreviewViewModel.class);
+        viewModel.getAllMemos(this).observe(this, new Observer<List<MemoWithFirstImage>>() {
             @Override
             public void onChanged(List<MemoWithFirstImage> memoWithFirstImages) {
                 int previousItemCount = mMemoAdapter.getItemCount();

@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,23 +19,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
-import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
-import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
-import com.wanjuuuuu.memoplusplus.models.MemoDao;
-import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
+import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
+import com.wanjuuuuu.memoplusplus.viewmodels.UpdateViewModel;
 import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MemoUpdateActivity extends AppCompatActivity {
@@ -53,11 +50,9 @@ public class MemoUpdateActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private UpdateMemoAdapter mMemoAdapter;
-    private MemoDao mMemoDao;
-    private ImageDao mImageDao;
+    private UpdateViewModel mViewModel;
+
     private Memo mMemo;
-    private List<Image> mImagesInserted;
-    private List<Image> mImagesDeleted;
     private String mPhotoPathFromCamera;
 
     @Override
@@ -77,11 +72,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        MemoPlusDatabase database = MemoPlusDatabase.getInstance(this);
-        mMemoDao = database.memoDao();
-        mImageDao = database.imageDao();
-        mImagesInserted = new ArrayList<>();
-        mImagesDeleted = new ArrayList<>();
+        mViewModel = new ViewModelProvider(this).get(UpdateViewModel.class);
 
         Intent intent = getIntent();
         if (intent == null || intent.getExtras() == null) {
@@ -138,8 +129,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
                             showToast(getString(R.string.toast_dialog_scheme_warning));
                             return;
                         }
-                        Image image = new Image(0, 0, mPhotoPathFromLinkUrl);
-                        addImage(image);
+                        addImage(mPhotoPathFromLinkUrl);
                         inputDialog.dismiss();
                     }
                 });
@@ -203,13 +193,11 @@ public class MemoUpdateActivity extends AppCompatActivity {
                     showToast(getString(R.string.toast_load_photo_error));
                     return;
                 }
-                Image image = new Image(0, 0, photoPathForGallery);
-                addImage(image);
+                addImage(photoPathForGallery);
             }
         } else if (requestCode == REQUEST_CODE_CAMERA) {
             if (resultCode == RESULT_OK) {
-                Image image = new Image(0, 0, mPhotoPathFromCamera);
-                addImage(image);
+                addImage(mPhotoPathFromCamera);
             }
         }
     }
@@ -243,18 +231,15 @@ public class MemoUpdateActivity extends AppCompatActivity {
         return dialogBuilder.create();
     }
 
-    private void addImage(Image image) {
-        mImagesInserted.add(image);
+    private void addImage(String imagePath) {
+        Image image = new Image(0, 0, imagePath);
+        mViewModel.addImage(image);
         mMemoAdapter.addImage(image);
         mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
     }
 
     private void removeImage(Image image) {
-        if (image.getImageId() == 0) {
-            mImagesInserted.remove(image);
-        } else {
-            mImagesDeleted.add(image);
-        }
+        mViewModel.deleteImage(image);
         mMemoAdapter.removeImage(image);
     }
 
@@ -263,30 +248,23 @@ public class MemoUpdateActivity extends AppCompatActivity {
     }
 
     private void saveMemoAndFinishActivity() {
-        DatabaseManager.executeTransaction(new Runnable() {
+        final boolean isUpdated = (mMemo != null);
+        createMemo();
+
+        mViewModel.updateMemoAndImages(this, mMemo, new OnCompleteListener() {
             @Override
-            public void run() {
-                final boolean isUpdated = (mMemo != null);
-
-                saveMemoOnDatabase();
-
-                Handler handler = new Handler(getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isUpdated) {
-                            Intent intent = new Intent();
-                            intent.putExtra("memo", mMemo);
-                            setResult(RESULT_OK, intent);
-                        }
-                        finish();
-                    }
-                });
+            public void onComplete() {
+                if (isUpdated) {
+                    Intent intent = new Intent();
+                    intent.putExtra("memo", mMemo);
+                    setResult(RESULT_OK, intent);
+                }
+                finish();
             }
         });
     }
 
-    private void saveMemoOnDatabase() {
+    private void createMemo() {
         String title = mMemoAdapter.getTitle();
         String content = mMemoAdapter.getContent();
         long timestamp = System.currentTimeMillis();
@@ -294,21 +272,9 @@ public class MemoUpdateActivity extends AppCompatActivity {
         long memoId;
         if (mMemo == null) {
             mMemo = new Memo(0, title, content, timestamp);
-            memoId = mMemoDao.insertMemo(mMemo);
         } else {
             memoId = mMemo.getId();
             mMemo = new Memo(memoId, title, content, timestamp);
-            mMemoDao.updateMemo(mMemo);
         }
-
-        List<Image> newImages = new ArrayList<>();
-        for (Image image : mImagesInserted) {
-            if (image != null) {
-                Image newImage = new Image(image.getImageId(), memoId, image.getPath());
-                newImages.add(newImage);
-            }
-        }
-        mImageDao.insertImages(newImages);
-        mImageDao.deleteImages(mImagesDeleted);
     }
 }
