@@ -4,15 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.wanjuuuuu.memoplusplus.R;
+import com.wanjuuuuu.memoplusplus.databinding.PreviewMemoViewBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 
@@ -38,7 +37,15 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
         mClickListener = clickListener;
     }
 
-    public void setMemos(List<MemoWithFirstImage> memos) {
+    @BindingAdapter({"bindItem"})
+    public static void bindItem(RecyclerView recyclerView, List<MemoWithFirstImage> memos) {
+        PreviewMemoAdapter adapter = (PreviewMemoAdapter) recyclerView.getAdapter();
+        if (adapter != null) {
+            adapter.setMemos(memos);
+        }
+    }
+
+    private void setMemos(List<MemoWithFirstImage> memos) {
         mMemoList.clear();
         if (memos == null || memos.isEmpty()) {
             return;
@@ -50,8 +57,10 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
     @NonNull
     @Override
     public MemoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MemoHolder(LayoutInflater.from(mContext).inflate(R.layout.preview_memo_view,
-                parent, false));
+        PreviewMemoViewBinding binding =
+                PreviewMemoViewBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                        false);
+        return new MemoHolder(binding);
     }
 
     @Override
@@ -67,50 +76,34 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<PreviewMemoAdapter.
 
     class MemoHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTitleView;
-        private TextView mContentView;
-        private ImageView mThumbnailView;
-        private MemoWithFirstImage mMemo;
+        private PreviewMemoViewBinding binding;
 
-        private MemoHolder(View view) {
-            super(view);
-
-            ConstraintLayout memoPreview = view.findViewById(R.id.memo_preview);
-            memoPreview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mClickListener != null) {
-                        mClickListener.onClick(mMemo);
-                    }
-                }
-            });
-            mTitleView = view.findViewById(R.id.preview_title_text_view);
-            mContentView = view.findViewById(R.id.preview_content_text_view);
-            mThumbnailView = view.findViewById(R.id.thumbnail_image_view);
+        private MemoHolder(PreviewMemoViewBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         private void bind(MemoWithFirstImage memo) {
             if (memo == null || memo.getMemo() == null) {
                 return;
             }
-            mMemo = memo;
-            String title = mMemo.getMemo().getTitle();
+            binding.setMemoWithFirstImage(memo);
+            binding.setClickListener(mClickListener);
 
+            String title = memo.getMemo().getTitle();
             if (title == null || title.length() == 0) {
                 title = mContext.getString(R.string.default_fill_title);
             }
-            mTitleView.setText(title);
-            String content = mMemo.getMemo().getContent();
-            mContentView.setText(content);
+            binding.previewTitleTextView.setText(title);
 
             Image firstImage = memo.getFirstImage();
             if (firstImage == null || firstImage.getPath() == null) {
-                mThumbnailView.setVisibility(View.GONE);
+                binding.thumbnailImageView.setVisibility(View.GONE);
                 return;
             }
-            mThumbnailView.setVisibility(View.VISIBLE);
+            binding.thumbnailImageView.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(firstImage.getPath())
-                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(mThumbnailView);
+                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(binding.thumbnailImageView);
         }
     }
 }
