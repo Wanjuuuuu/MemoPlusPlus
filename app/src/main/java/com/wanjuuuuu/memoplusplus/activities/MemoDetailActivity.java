@@ -34,7 +34,7 @@ public class MemoDetailActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_UPDATE = 100;
 
-    private ActivityMemoDetailBinding binding;
+    private ActivityMemoDetailBinding mBinding;
     private DetailViewModel mViewModel;
 
     private Memo mMemo;
@@ -44,13 +44,13 @@ public class MemoDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this,
+        mBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_memo_detail);
 
         DetailMemoAdapter memoAdapter = new DetailMemoAdapter(this);
-        binding.detailMemoRecyclerView.setAdapter(memoAdapter);
+        mBinding.detailMemoRecyclerView.setAdapter(memoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.detailMemoRecyclerView.setLayoutManager(layoutManager);
+        mBinding.detailMemoRecyclerView.setLayoutManager(layoutManager);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -64,14 +64,14 @@ public class MemoDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
-        binding.setMemo(mMemo);
+        mBinding.setMemo(mMemo);
 
         mViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
         mViewModel.getImages(this, mMemo.getId()).observe(this, new Observer<List<Image>>() {
             @Override
             public void onChanged(List<Image> images) {
                 mImages = new ArrayList<>(images);
-                binding.setImages(mImages);
+                mBinding.setImages(mImages);
             }
         });
     }
@@ -136,8 +136,8 @@ public class MemoDetailActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
-                binding.setMemo(mMemo);
-                binding.detailMemoRecyclerView.smoothScrollToPosition(0);
+                mBinding.setMemo(mMemo);
+                mBinding.detailMemoRecyclerView.smoothScrollToPosition(0);
             }
         }
     }

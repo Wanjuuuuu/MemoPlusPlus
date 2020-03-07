@@ -19,12 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
+import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoUpdateBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
@@ -48,7 +49,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_GALLERY = 101;
     private static final int REQUEST_CODE_CAMERA = 102;
 
-    private RecyclerView mRecyclerView;
+    private ActivityMemoUpdateBinding mBinding;
     private UpdateMemoAdapter mMemoAdapter;
     private UpdateViewModel mViewModel;
 
@@ -58,8 +59,8 @@ public class MemoUpdateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memo_update);
-        mRecyclerView = findViewById(R.id.update_photo_recycler_view);
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_memo_update);
 
         mMemoAdapter = new UpdateMemoAdapter(this);
         mMemoAdapter.setOnRemoveListener(new UpdateMemoAdapter.OnRemoveListener() {
@@ -68,9 +69,9 @@ public class MemoUpdateActivity extends AppCompatActivity {
                 removeImage(image);
             }
         });
-        mRecyclerView.setAdapter(mMemoAdapter);
+        mBinding.updateMemoRecyclerView.setAdapter(mMemoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mBinding.updateMemoRecyclerView.setLayoutManager(layoutManager);
 
         mViewModel = new ViewModelProvider(this).get(UpdateViewModel.class);
 
@@ -87,9 +88,10 @@ public class MemoUpdateActivity extends AppCompatActivity {
             finish();
             return;
         }
+        mBinding.setMemo(mMemo);
 
         List<Image> images = bundle.getParcelableArrayList("images");
-        mMemoAdapter.initItems(mMemo, images);
+        mBinding.setImages(images);
     }
 
     @Override
@@ -235,7 +237,7 @@ public class MemoUpdateActivity extends AppCompatActivity {
         Image image = new Image(0, 0, imagePath);
         mViewModel.addImage(image);
         mMemoAdapter.addImage(image);
-        mRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
+        mBinding.updateMemoRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
     }
 
     private void removeImage(Image image) {

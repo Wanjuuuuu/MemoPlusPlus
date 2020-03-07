@@ -1,45 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/update_layout_marginTop"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="memo"
+            type="com.wanjuuuuu.memoplusplus.models.Memo" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/update_item_marginBottom"
-        android:background="@drawable/round_rectangle_bg"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/update_item_paddingStart"
-        android:paddingTop="@dimen/update_item_paddingTop"
-        android:paddingEnd="@dimen/update_item_paddingEnd"
-        android:paddingBottom="@dimen/update_item_paddingBottom">
+        android:layout_marginTop="@dimen/update_layout_marginTop"
+        android:orientation="vertical">
 
-        <com.wanjuuuuu.memoplusplus.views.ClearEditText
-            android:id="@+id/update_title_edit_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/update_title_hint" />
-    </LinearLayout>
+            android:layout_marginBottom="@dimen/update_item_marginBottom"
+            android:background="@drawable/round_rectangle_bg"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/update_item_paddingStart"
+            android:paddingTop="@dimen/update_item_paddingTop"
+            android:paddingEnd="@dimen/update_item_paddingEnd"
+            android:paddingBottom="@dimen/update_item_paddingBottom">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/update_item_marginBottom"
-        android:background="@drawable/round_rectangle_bg"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/update_item_paddingStart"
-        android:paddingTop="@dimen/update_item_paddingTop"
-        android:paddingEnd="@dimen/update_item_paddingEnd"
-        android:paddingBottom="@dimen/update_item_paddingBottom">
+            <com.wanjuuuuu.memoplusplus.views.ClearEditText
+                android:id="@+id/update_title_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/update_title_hint"
+                android:text="@{memo.title}" />
+        </LinearLayout>
 
-        <com.wanjuuuuu.memoplusplus.views.ClearEditText
-            android:id="@+id/update_content_edit_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/update_content_hint" />
+            android:layout_marginBottom="@dimen/update_item_marginBottom"
+            android:background="@drawable/round_rectangle_bg"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/update_item_paddingStart"
+            android:paddingTop="@dimen/update_item_paddingTop"
+            android:paddingEnd="@dimen/update_item_paddingEnd"
+            android:paddingBottom="@dimen/update_item_paddingBottom">
+
+            <com.wanjuuuuu.memoplusplus.views.ClearEditText
+                android:id="@+id/update_content_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/update_content_hint"
+                android:text="@{memo.content}" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-</LinearLayout>
+</layout>

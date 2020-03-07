@@ -3,10 +3,7 @@ package com.wanjuuuuu.memoplusplus.adapters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,15 +16,16 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.wanjuuuuu.memoplusplus.R;
+import com.wanjuuuuu.memoplusplus.databinding.EditHeaderViewBinding;
+import com.wanjuuuuu.memoplusplus.databinding.EditPhotoViewBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.utils.Logger;
-import com.wanjuuuuu.memoplusplus.views.ClearEditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UpdateMemoAdapter extends CustomAdapter {
 
     public interface OnRemoveListener {
         void onRemove(Image image);
@@ -52,12 +50,16 @@ public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mRemoveListener = removeListener;
     }
 
-    public void initItems(Memo memo, List<Image> images) {
+    @Override
+    void setMemo(Memo memo) {
         if (memo == null) {
             return;
         }
         mMemo = memo;
+    }
 
+    @Override
+    void setImages(List<Image> images) {
         if (images == null || images.isEmpty()) {
             return;
         }
@@ -103,11 +105,16 @@ public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            mHeaderHolder = new HeaderHolder(LayoutInflater.from(mContext).inflate(R.layout.edit_header_view, parent, false));
+            EditHeaderViewBinding binding =
+                    EditHeaderViewBinding.inflate(LayoutInflater.from(parent.getContext()),
+                            parent, false);
+            mHeaderHolder = new HeaderHolder(binding);
             return mHeaderHolder;
         }
-        return new PhotoHolder(LayoutInflater.from(mContext).inflate(R.layout.edit_photo_view,
-                parent, false));
+        EditPhotoViewBinding binding =
+                EditPhotoViewBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                        false);
+        return new PhotoHolder(binding);
     }
 
     @Override
@@ -132,30 +139,26 @@ public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
 
-        private ImageView mPhotoView;
-        private Image mImage;
+        private EditPhotoViewBinding mBinding;
 
-        private PhotoHolder(View view) {
-            super(view);
-            mPhotoView = view.findViewById(R.id.update_image_view);
-            ImageButton clearButton = view.findViewById(R.id.clear_image_button);
-            clearButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mRemoveListener != null) {
-                        mRemoveListener.onRemove(mImage);
-                    }
-                }
-            });
+        private PhotoHolder(EditPhotoViewBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
         }
 
-        private void bind(Image image) {
+        private void bind(final Image image) {
             if (image == null) {
                 return;
             }
-            mImage = image;
+            mBinding.setClickListener(mRemoveListener);
+            mBinding.setImage(image);
 
-            Glide.with(mContext).load(mImage.getPath()).addListener(new RequestListener<Drawable>() {
+            String path = "";
+            if (image.getPath() != null) {
+                path = image.getPath();
+            }
+
+            Glide.with(mContext).load(path).addListener(new RequestListener<Drawable>() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model,
                                             Target<Drawable> target, boolean isFirstResource) {
@@ -163,7 +166,7 @@ public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         Logger.debug(TAG, e.getMessage());
                     }
                     if (mRemoveListener != null) {
-                        mRemoveListener.onRemove(mImage);
+                        mRemoveListener.onRemove(image);
                     }
 
                     Toast.makeText(mContext, mContext.getString(R.string.toast_load_photo_error),
@@ -178,41 +181,38 @@ public class UpdateMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                                boolean isFirstResource) {
                     return false;
                 }
-            }).into(mPhotoView);
+            }).into(mBinding.updateImageView);
         }
     }
 
     private class HeaderHolder extends RecyclerView.ViewHolder {
 
-        private ClearEditText mTitleEditText;
-        private ClearEditText mContentEditText;
+        private EditHeaderViewBinding mBinding;
 
-        private HeaderHolder(View view) {
-            super(view);
-            mTitleEditText = view.findViewById(R.id.update_title_edit_text);
-            mContentEditText = view.findViewById(R.id.update_content_edit_text);
+        private HeaderHolder(EditHeaderViewBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
         }
 
         private void bind(Memo memo) {
             if (memo == null) {
                 return;
             }
-            mTitleEditText.setText(memo.getTitle());
-            mContentEditText.setText(memo.getContent());
+            mBinding.setMemo(memo);
         }
 
         private String getTitle() {
-            if (mTitleEditText.getText() == null) {
+            if (mBinding.updateTitleEditText.getText() == null) {
                 return "";
             }
-            return mTitleEditText.getText().toString();
+            return mBinding.updateTitleEditText.getText().toString();
         }
 
         private String getContent() {
-            if (mContentEditText.getText() == null) {
+            if (mBinding.updateContentEditText.getText() == null) {
                 return "";
             }
-            return mContentEditText.getText().toString();
+            return mBinding.updateContentEditText.getText().toString();
         }
     }
 }
