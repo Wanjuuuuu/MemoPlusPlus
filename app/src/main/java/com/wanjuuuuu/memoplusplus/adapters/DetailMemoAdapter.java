@@ -2,30 +2,24 @@ package com.wanjuuuuu.memoplusplus.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.wanjuuuuu.memoplusplus.R;
+import com.wanjuuuuu.memoplusplus.databinding.DetailHeaderViewBinding;
+import com.wanjuuuuu.memoplusplus.databinding.DetailPhotoViewBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Asia/Seoul");
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 " +
-            "mm분");
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_PHOTO = 1;
 
@@ -38,7 +32,16 @@ public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mImageList = new ArrayList<>();
     }
 
-    public void setMemo(Memo memo) {
+    @BindingAdapter({"bindMemo", "bindImages"})
+    public static void bindItem(RecyclerView recyclerView, Memo memo, List<Image> images) {
+        DetailMemoAdapter adapter = (DetailMemoAdapter) recyclerView.getAdapter();
+        if (adapter != null) {
+            adapter.setMemo(memo);
+            adapter.setImages(images);
+        }
+    }
+
+    private void setMemo(Memo memo) {
         if (memo == null) {
             return;
         }
@@ -46,7 +49,7 @@ public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyItemChanged(TYPE_HEADER);
     }
 
-    public void setImages(List<Image> images) {
+    private void setImages(List<Image> images) {
         mImageList.clear();
         if (images != null && !images.isEmpty()) {
             mImageList.addAll(images);
@@ -58,10 +61,15 @@ public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            return new HeaderHolder(LayoutInflater.from(mContext).inflate(R.layout.detail_header_view, parent, false));
+            DetailHeaderViewBinding binding =
+                    DetailHeaderViewBinding.inflate(LayoutInflater.from(parent.getContext()),
+                            parent, false);
+            return new HeaderHolder(binding);
         }
-        return new PhotoHolder(LayoutInflater.from(mContext).inflate(R.layout.detail_photo_view,
-                parent, false));
+        DetailPhotoViewBinding binding =
+                DetailPhotoViewBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                        false);
+        return new PhotoHolder(binding);
     }
 
     @Override
@@ -86,49 +94,42 @@ public class DetailMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
 
-        private ImageView mPhotoView;
+        private DetailPhotoViewBinding binding;
 
-        private PhotoHolder(View view) {
-            super(view);
-            mPhotoView = view.findViewById(R.id.detail_image_view);
+        private PhotoHolder(DetailPhotoViewBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         private void bind(Image image) {
+            if (image == null) {
+                return;
+            }
+            binding.setImage(image);
+
             String path = "";
             if (image != null && image.getPath() != null) {
                 path = image.getPath();
             }
             Glide.with(mContext).load(path)
-                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(mPhotoView);
+                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(binding.detailImageView);
         }
     }
 
     private class HeaderHolder extends RecyclerView.ViewHolder {
 
-        private TextView mDateView;
-        private TextView mTitleView;
-        private TextView mContentView;
+        private DetailHeaderViewBinding binding;
 
-        private HeaderHolder(View view) {
-            super(view);
-            mDateView = view.findViewById(R.id.detail_modifyDatetime_text_view);
-            mTitleView = view.findViewById(R.id.detail_title_text_view);
-            mContentView = view.findViewById(R.id.detail_content_text_view);
+        private HeaderHolder(DetailHeaderViewBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         private void bind(Memo memo) {
             if (memo == null) {
                 return;
             }
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeZone(TIME_ZONE);
-            calendar.setTimeInMillis(memo.getModifyTimestamp());
-
-            String modifyDatetime = DATE_FORMAT.format(calendar.getTime());
-            mDateView.setText(modifyDatetime);
-            mTitleView.setText(memo.getTitle());
-            mContentView.setText(memo.getContent());
+            binding.setMemo(memo);
         }
     }
 }

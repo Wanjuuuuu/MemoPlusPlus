@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_color"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/detail_photo_recycler_view"
+    <data>
+
+        <import type="java.util.List" />
+
+        <import type="com.wanjuuuuu.memoplusplus.models.Image" />
+
+        <variable
+            name="memo"
+            type="com.wanjuuuuu.memoplusplus.models.Memo" />
+
+        <variable
+            name="images"
+            type="List&lt;Image>" />
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/background_color"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/detail_memo_recycler_view"
+            bindMemo="@{memo}"
+            bindImages="@{images}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</layout>

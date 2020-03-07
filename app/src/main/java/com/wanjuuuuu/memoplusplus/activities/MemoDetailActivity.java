@@ -14,13 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanjuuuuu.memoplusplus.R;
 import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
+import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoDetailBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
@@ -33,8 +34,7 @@ public class MemoDetailActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_UPDATE = 100;
 
-    private RecyclerView mRecyclerView;
-    private DetailMemoAdapter mMemoAdapter;
+    private ActivityMemoDetailBinding binding;
     private DetailViewModel mViewModel;
 
     private Memo mMemo;
@@ -43,13 +43,14 @@ public class MemoDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memo_detail);
-        mRecyclerView = findViewById(R.id.detail_photo_recycler_view);
 
-        mMemoAdapter = new DetailMemoAdapter(this);
-        mRecyclerView.setAdapter(mMemoAdapter);
+        binding = DataBindingUtil.setContentView(this,
+                R.layout.activity_memo_detail);
+
+        DetailMemoAdapter memoAdapter = new DetailMemoAdapter(this);
+        binding.detailMemoRecyclerView.setAdapter(memoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
+        binding.detailMemoRecyclerView.setLayoutManager(layoutManager);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -63,14 +64,14 @@ public class MemoDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
-        mMemoAdapter.setMemo(mMemo);
+        binding.setMemo(mMemo);
 
         mViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
         mViewModel.getImages(this, mMemo.getId()).observe(this, new Observer<List<Image>>() {
             @Override
             public void onChanged(List<Image> images) {
                 mImages = new ArrayList<>(images);
-                mMemoAdapter.setImages(mImages);
+                binding.setImages(mImages);
             }
         });
     }
@@ -135,8 +136,8 @@ public class MemoDetailActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
-                mMemoAdapter.setMemo(mMemo);
-                mRecyclerView.smoothScrollToPosition(0);
+                binding.setMemo(mMemo);
+                binding.detailMemoRecyclerView.smoothScrollToPosition(0);
             }
         }
     }

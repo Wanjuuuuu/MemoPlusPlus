@@ -1,65 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/detail_layout_marginTop"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="memo"
+            type="com.wanjuuuuu.memoplusplus.models.Memo" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/detail_item_marginBottom"
-        android:background="@drawable/round_rectangle_bg"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/detail_item_paddingStart"
-        android:paddingTop="@dimen/detail_item_paddingTop"
-        android:paddingEnd="@dimen/detail_item_paddingEnd"
-        android:paddingBottom="@dimen/detail_item_paddingBottom">
+        android:layout_marginTop="@dimen/detail_layout_marginTop"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/detail_modifyDatetime_text_view"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/detail_date_size" />
-    </LinearLayout>
+            android:layout_marginBottom="@dimen/detail_item_marginBottom"
+            android:background="@drawable/round_rectangle_bg"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/detail_item_paddingStart"
+            android:paddingTop="@dimen/detail_item_paddingTop"
+            android:paddingEnd="@dimen/detail_item_paddingEnd"
+            android:paddingBottom="@dimen/detail_item_paddingBottom">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/detail_item_marginBottom"
-        android:background="@drawable/round_rectangle_bg"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/detail_item_paddingStart"
-        android:paddingTop="@dimen/detail_item_paddingTop"
-        android:paddingEnd="@dimen/detail_item_paddingEnd"
-        android:paddingBottom="@dimen/detail_item_paddingBottom">
+            <TextView
+                android:id="@+id/detail_modifyDatetime_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{memo.modifyDatetime}"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/detail_date_size" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/detail_title_text_view"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/detail_title_size" />
-    </LinearLayout>
+            android:layout_marginBottom="@dimen/detail_item_marginBottom"
+            android:background="@drawable/round_rectangle_bg"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/detail_item_paddingStart"
+            android:paddingTop="@dimen/detail_item_paddingTop"
+            android:paddingEnd="@dimen/detail_item_paddingEnd"
+            android:paddingBottom="@dimen/detail_item_paddingBottom">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/detail_item_marginBottom"
-        android:background="@drawable/round_rectangle_bg"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/detail_item_paddingStart"
-        android:paddingTop="@dimen/detail_item_paddingTop"
-        android:paddingEnd="@dimen/detail_item_paddingEnd"
-        android:paddingBottom="@dimen/detail_item_paddingBottom">
+            <TextView
+                android:id="@+id/detail_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{memo.title}"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/detail_title_size" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/detail_content_text_view"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/detail_content_size" />
-    </LinearLayout>
+            android:layout_marginBottom="@dimen/detail_item_marginBottom"
+            android:background="@drawable/round_rectangle_bg"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/detail_item_paddingStart"
+            android:paddingTop="@dimen/detail_item_paddingTop"
+            android:paddingEnd="@dimen/detail_item_paddingEnd"
+            android:paddingBottom="@dimen/detail_item_paddingBottom">
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/detail_content_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{memo.content}"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/detail_content_size" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
