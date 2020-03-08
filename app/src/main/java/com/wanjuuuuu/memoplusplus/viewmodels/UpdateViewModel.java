@@ -17,6 +17,11 @@ public class UpdateViewModel extends BaseViewModel {
     private List<Image> mImagesInserted = new ArrayList<>();
     private List<Image> mImagesDeleted = new ArrayList<>();
 
+    @Override
+    protected void setUpAdapter() {
+
+    }
+
     public void addImage(Image image) {
         mImagesInserted.add(image);
     }

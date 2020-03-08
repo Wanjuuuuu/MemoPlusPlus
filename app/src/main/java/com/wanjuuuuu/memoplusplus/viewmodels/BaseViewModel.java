@@ -8,12 +8,19 @@ import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.MemoDao;
 import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 
-public class BaseViewModel extends ViewModel {
+public abstract class BaseViewModel extends ViewModel {
 
     protected MemoDao mMemoDao;
     protected ImageDao mImageDao;
 
     public void init(Context context) {
+        setUpAdapter();
+        setUpDatabase(context);
+    }
+
+    protected abstract void setUpAdapter();
+
+    private void setUpDatabase(Context context) {
         MemoPlusDatabase database = MemoPlusDatabase.getInstance(context);
         mMemoDao = database.memoDao();
         mImageDao = database.imageDao();

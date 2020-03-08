@@ -1,7 +1,6 @@
 package com.wanjuuuuu.memoplusplus.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -18,22 +17,22 @@ import java.util.List;
 
 public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public interface OnClickListener {
+    public interface OnItemClickListener {
         void onClick(MemoWithFirstImage memo);
     }
 
     private List<MemoWithFirstImage> mMemoList;
-    private OnClickListener mClickListener;
+    private OnItemClickListener mItemClickListener;
 
     public PreviewMemoAdapter() {
         mMemoList = new ArrayList<>();
     }
 
-    public void setOnClickListener(OnClickListener clickListener) {
-        mClickListener = clickListener;
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
+        mItemClickListener = itemClickListener;
     }
 
-    void setMemos(List<MemoWithFirstImage> memos) {
+    public void setMemos(List<MemoWithFirstImage> memos) {
         mMemoList.clear();
         if (memos == null || memos.isEmpty()) {
             return;
@@ -75,23 +74,14 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (memo == null || memo.getMemo() == null) {
                 return;
             }
-            mBinding.setClickListener(mClickListener);
             mBinding.setMemoWithFirstImage(memo);
-
-            String title = memo.getMemo().getTitle();
-            if (title == null || title.length() == 0) {
-                title = mBinding.getRoot().getContext().getString(R.string.default_fill_title);
-            }
-            mBinding.previewTitleTextView.setText(title);
+            mBinding.setItemClickListener(mItemClickListener);
 
             Image firstImage = memo.getFirstImage();
-            if (firstImage == null || firstImage.getPath() == null) {
-                mBinding.thumbnailImageView.setVisibility(View.GONE);
-                return;
+            if (firstImage != null && firstImage.getPath() != null) {
+                Glide.with(mBinding.getRoot()).load(firstImage.getPath())
+                        .error(R.drawable.ic_fallback).into(mBinding.thumbnailImageView);
             }
-            mBinding.thumbnailImageView.setVisibility(View.VISIBLE);
-            Glide.with(mBinding.getRoot()).load(firstImage.getPath())
-                    .error(R.drawable.ic_fallback).into(mBinding.thumbnailImageView);
         }
     }
 }

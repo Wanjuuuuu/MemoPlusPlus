@@ -1,7 +1,6 @@
 package com.wanjuuuuu.memoplusplus;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
@@ -17,12 +16,8 @@ import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 import com.wanjuuuuu.memoplusplus.viewmodels.PreviewViewModel;
 
-import java.util.List;
-
 public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding,
         PreviewViewModel> {
-
-    private PreviewMemoAdapter mMemoAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -36,7 +31,7 @@ public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding
 
     @Override
     protected int getBindingVariable() {
-        return 0;
+        return BR.previewViewModel;
     }
 
     @Override
@@ -46,8 +41,12 @@ public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding
         // request necessary Permissions to use app
         PermissionManager.requestAll(this);
 
-        mMemoAdapter = new PreviewMemoAdapter();
-        mMemoAdapter.setOnClickListener(new PreviewMemoAdapter.OnClickListener() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        mBinding.previewMemoRecyclerView.setLayoutManager(layoutManager);
+
+        mViewModel.getAdapter().setOnItemClickListener(new PreviewMemoAdapter.OnItemClickListener() {
             @Override
             public void onClick(MemoWithFirstImage memo) {
                 if (memo == null || memo.getMemo() == null) {
@@ -58,25 +57,13 @@ public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding
                 startActivity(intent);
             }
         });
-        mBinding.previewMemoRecyclerView.setAdapter(mMemoAdapter);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-        mBinding.previewMemoRecyclerView.setLayoutManager(layoutManager);
-
-        mViewModel.getAllMemos().observe(this, new Observer<List<MemoWithFirstImage>>() {
+        mViewModel.setUpdateListener(new PreviewViewModel.OnUpdateListener() {
             @Override
-            public void onChanged(List<MemoWithFirstImage> memoWithFirstImages) {
-                int previousItemCount = mMemoAdapter.getItemCount();
-                mBinding.setMemos(memoWithFirstImages);
-                // memo is added or updated
-                int currentItemCount = mMemoAdapter.getItemCount();
-                if (currentItemCount > 0 && currentItemCount >= previousItemCount) {
-                    mBinding.previewMemoRecyclerView.smoothScrollToPosition(currentItemCount - 1);
-                }
+            public void onUpdated(int itemCount) {
+                mBinding.previewMemoRecyclerView.smoothScrollToPosition(itemCount - 1);
             }
         });
+        mViewModel.loadAllMemos(this);
     }
 
     @Override

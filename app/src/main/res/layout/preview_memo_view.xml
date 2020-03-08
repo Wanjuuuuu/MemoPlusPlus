@@ -4,13 +4,15 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="memoWithFirstImage"
             type="com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage" />
 
         <variable
-            name="clickListener"
-            type="com.wanjuuuuu.memoplusplus.adapters.PreviewMemoAdapter.OnClickListener" />
+            name="itemClickListener"
+            type="com.wanjuuuuu.memoplusplus.adapters.PreviewMemoAdapter.OnItemClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/preview_memo_height"
         android:background="@drawable/round_rectangle_bg"
-        android:onClick="@{() -> clickListener.onClick(memoWithFirstImage)}">
+        android:onClick="@{() -> itemClickListener.onClick(memoWithFirstImage)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/title_content_wrapper"
@@ -39,7 +41,7 @@
                 android:layout_marginTop="@dimen/preview_title_marginTop"
                 android:ellipsize="end"
                 android:maxLines="@integer/preview_title_maxLines"
-                android:text="@{memoWithFirstImage.memo.title}"
+                android:text="@{memoWithFirstImage.memo.title == null || memoWithFirstImage.memo.title.length() == 0? @string/default_fill_title : memoWithFirstImage.memo.title}"
                 android:textColor="@color/text_color"
                 android:textSize="@dimen/preview_title_size"
                 app:layout_constraintStart_toStartOf="parent"
@@ -68,6 +70,7 @@
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/preview_image_marginEnd"
             android:scaleType="fitXY"
+            android:visibility="@{memoWithFirstImage.firstImage == null || memoWithFirstImage.firstImage.path == null? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

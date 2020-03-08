@@ -17,6 +17,11 @@ public class DetailViewModel extends BaseViewModel {
 
     private LiveData<List<Image>> mImages;
 
+    @Override
+    protected void setUpAdapter() {
+
+    }
+
     public LiveData<List<Image>> getImages(long memoId) {
         if (mImages == null) {
             mImages = mImageDao.getImages(memoId);

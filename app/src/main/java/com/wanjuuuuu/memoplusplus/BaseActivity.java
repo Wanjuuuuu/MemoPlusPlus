@@ -32,9 +32,7 @@ public abstract class BaseActivity<VB extends ViewDataBinding, VM extends BaseVi
             mViewModel = new ViewModelProvider(this).get(getViewModel());
         }
         mViewModel.init(this);
-//        mBinding.setVariable(getBindingVariable(), mViewModel);
-//        mBinding.executePendingBindings();
+        mBinding.setVariable(getBindingVariable(), mViewModel);
+        mBinding.executePendingBindings();
     }
-
-
 }
