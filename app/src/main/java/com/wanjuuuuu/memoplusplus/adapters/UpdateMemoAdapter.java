@@ -25,7 +25,7 @@ import com.wanjuuuuu.memoplusplus.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateMemoAdapter extends CustomAdapter {
+public class UpdateMemoAdapter extends BaseAdapter {
 
     public interface OnRemoveListener {
         void onRemove(Image image);
@@ -35,14 +35,12 @@ public class UpdateMemoAdapter extends CustomAdapter {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_PHOTO = 1;
 
-    private Context mContext;
     private HeaderHolder mHeaderHolder;
     private Memo mMemo;
     private List<Image> mImageList;
     private OnRemoveListener mRemoveListener;
 
-    public UpdateMemoAdapter(Context context) {
-        mContext = context;
+    public UpdateMemoAdapter() {
         mImageList = new ArrayList<>();
     }
 
@@ -158,7 +156,7 @@ public class UpdateMemoAdapter extends CustomAdapter {
                 path = image.getPath();
             }
 
-            Glide.with(mContext).load(path).addListener(new RequestListener<Drawable>() {
+            Glide.with(mBinding.getRoot()).load(path).addListener(new RequestListener<Drawable>() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model,
                                             Target<Drawable> target, boolean isFirstResource) {
@@ -169,7 +167,8 @@ public class UpdateMemoAdapter extends CustomAdapter {
                         mRemoveListener.onRemove(image);
                     }
 
-                    Toast.makeText(mContext, mContext.getString(R.string.toast_load_photo_error),
+                    Context context = mBinding.getRoot().getContext();
+                    Toast.makeText(context, context.getString(R.string.toast_load_photo_error),
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }

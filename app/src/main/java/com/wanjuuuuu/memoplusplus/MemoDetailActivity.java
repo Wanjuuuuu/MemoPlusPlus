@@ -52,7 +52,7 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DetailMemoAdapter memoAdapter = new DetailMemoAdapter(this);
+        DetailMemoAdapter memoAdapter = new DetailMemoAdapter();
         mBinding.detailMemoRecyclerView.setAdapter(memoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mBinding.detailMemoRecyclerView.setLayoutManager(layoutManager);

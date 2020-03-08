@@ -46,7 +46,7 @@ public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding
         // request necessary Permissions to use app
         PermissionManager.requestAll(this);
 
-        mMemoAdapter = new PreviewMemoAdapter(this);
+        mMemoAdapter = new PreviewMemoAdapter();
         mMemoAdapter.setOnClickListener(new PreviewMemoAdapter.OnClickListener() {
             @Override
             public void onClick(MemoWithFirstImage memo) {

@@ -1,6 +1,5 @@
 package com.wanjuuuuu.memoplusplus.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -17,17 +16,15 @@ import com.wanjuuuuu.memoplusplus.models.Memo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailMemoAdapter extends CustomAdapter {
+public class DetailMemoAdapter extends BaseAdapter {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_PHOTO = 1;
 
-    private Context mContext;
     private Memo mMemo;
     private List<Image> mImageList;
 
-    public DetailMemoAdapter(Context context) {
-        mContext = context;
+    public DetailMemoAdapter() {
         mImageList = new ArrayList<>();
     }
 
@@ -104,8 +101,8 @@ public class DetailMemoAdapter extends CustomAdapter {
                 path = image.getPath();
             }
 
-            Glide.with(mContext).load(path)
-                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(mBinding.detailImageView);
+            Glide.with(mBinding.getRoot()).load(path)
+                    .error(R.drawable.ic_fallback).into(mBinding.detailImageView);
         }
     }
 

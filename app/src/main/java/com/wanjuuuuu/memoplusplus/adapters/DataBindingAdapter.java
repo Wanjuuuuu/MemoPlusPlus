@@ -11,6 +11,11 @@ import java.util.List;
 
 public class DataBindingAdapter {
 
+    @BindingAdapter({"adapter"})
+    public static void setAdapter(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+        recyclerView.setAdapter(adapter);
+    }
+
     @BindingAdapter({"bindItem"})
     public static void bindAllMemos(RecyclerView recyclerView, List<MemoWithFirstImage> memos) {
         PreviewMemoAdapter adapter = (PreviewMemoAdapter) recyclerView.getAdapter();
@@ -21,7 +26,7 @@ public class DataBindingAdapter {
 
     @BindingAdapter({"bindMemo", "bindImages"})
     public static void bindMemoAndImages(RecyclerView recyclerView, Memo memo, List<Image> images) {
-        CustomAdapter adapter = (CustomAdapter) recyclerView.getAdapter();
+        BaseAdapter adapter = (BaseAdapter) recyclerView.getAdapter();
         if (adapter != null) {
             adapter.setMemo(memo);
             adapter.setImages(images);

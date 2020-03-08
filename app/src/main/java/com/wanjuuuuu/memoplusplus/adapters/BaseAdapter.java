@@ -7,7 +7,7 @@ import com.wanjuuuuu.memoplusplus.models.Memo;
 
 import java.util.List;
 
-abstract class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     abstract void setMemo(Memo memo);
 

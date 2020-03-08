@@ -1,6 +1,5 @@
 package com.wanjuuuuu.memoplusplus.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +22,10 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         void onClick(MemoWithFirstImage memo);
     }
 
-    private Context mContext;
     private List<MemoWithFirstImage> mMemoList;
     private OnClickListener mClickListener;
 
-    public PreviewMemoAdapter(Context context) {
-        mContext = context;
+    public PreviewMemoAdapter() {
         mMemoList = new ArrayList<>();
     }
 
@@ -83,7 +80,7 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             String title = memo.getMemo().getTitle();
             if (title == null || title.length() == 0) {
-                title = mContext.getString(R.string.default_fill_title);
+                title = mBinding.getRoot().getContext().getString(R.string.default_fill_title);
             }
             mBinding.previewTitleTextView.setText(title);
 
@@ -93,8 +90,8 @@ public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 return;
             }
             mBinding.thumbnailImageView.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(firstImage.getPath())
-                    .error(mContext.getDrawable(R.drawable.ic_fallback)).into(mBinding.thumbnailImageView);
+            Glide.with(mBinding.getRoot()).load(firstImage.getPath())
+                    .error(R.drawable.ic_fallback).into(mBinding.thumbnailImageView);
         }
     }
 }

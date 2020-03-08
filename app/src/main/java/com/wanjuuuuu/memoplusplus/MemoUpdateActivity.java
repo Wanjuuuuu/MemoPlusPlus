@@ -68,7 +68,7 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMemoAdapter = new UpdateMemoAdapter(this);
+        mMemoAdapter = new UpdateMemoAdapter();
         mMemoAdapter.setOnRemoveListener(new UpdateMemoAdapter.OnRemoveListener() {
             @Override
             public void onRemove(Image image) {
