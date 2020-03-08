@@ -10,7 +10,6 @@ import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
 import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
-import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,10 @@ import java.util.List;
 import static android.os.Looper.getMainLooper;
 
 public class DetailViewModel extends BaseViewModel {
+
+    public interface OnCompleteListener {
+        void onRemoved();
+    }
 
     private DetailMemoAdapter mAdapter;
     private Memo mMemo;
@@ -45,7 +48,9 @@ public class DetailViewModel extends BaseViewModel {
     }
 
     public void setMemo(Memo memo) {
-        mMemo = memo;
+        if (mMemo == null) {
+            mMemo = memo;
+        }
         mAdapter.setMemo(memo);
     }
 
@@ -73,7 +78,7 @@ public class DetailViewModel extends BaseViewModel {
                     @Override
                     public void run() {
                         if (completeListener != null) {
-                            completeListener.onComplete();
+                            completeListener.onRemoved();
                         }
                     }
                 });

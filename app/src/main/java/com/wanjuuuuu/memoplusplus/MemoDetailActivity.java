@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoDetailBinding;
 import com.wanjuuuuu.memoplusplus.models.Memo;
-import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
 import com.wanjuuuuu.memoplusplus.viewmodels.DetailViewModel;
 
 public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, DetailViewModel> {
@@ -92,9 +91,9 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            mViewModel.deleteMemoAndImages(new OnCompleteListener() {
+                            mViewModel.deleteMemoAndImages(new DetailViewModel.OnCompleteListener() {
                                 @Override
-                                public void onComplete() {
+                                public void onRemoved() {
                                     showToast(getString(R.string.toast_delete_memo));
                                     finish();
                                 }

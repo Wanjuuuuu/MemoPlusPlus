@@ -48,16 +48,14 @@ public class UpdateMemoAdapter extends BaseAdapter {
         mRemoveListener = removeListener;
     }
 
-    @Override
-    void setMemo(Memo memo) {
+    public void setMemo(Memo memo) {
         if (memo == null) {
             return;
         }
         mMemo = memo;
     }
 
-    @Override
-    void setImages(List<Image> images) {
+    public void setImages(List<Image> images) {
         if (images == null || images.isEmpty()) {
             return;
         }

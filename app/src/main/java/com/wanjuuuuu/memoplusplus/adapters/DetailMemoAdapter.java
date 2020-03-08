@@ -28,7 +28,6 @@ public class DetailMemoAdapter extends BaseAdapter {
         mImageList = new ArrayList<>();
     }
 
-    @Override
     public void setMemo(Memo memo) {
         if (memo == null) {
             return;
@@ -37,7 +36,6 @@ public class DetailMemoAdapter extends BaseAdapter {
         notifyItemChanged(TYPE_HEADER);
     }
 
-    @Override
     public void setImages(List<Image> images) {
         mImageList.clear();
         if (images != null && !images.isEmpty()) {

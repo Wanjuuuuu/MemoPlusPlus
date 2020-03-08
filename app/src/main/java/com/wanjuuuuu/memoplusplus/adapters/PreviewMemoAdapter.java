@@ -15,7 +15,7 @@ import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreviewMemoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PreviewMemoAdapter extends BaseAdapter {
 
     public interface OnItemClickListener {
         void onClick(MemoWithFirstImage memo);

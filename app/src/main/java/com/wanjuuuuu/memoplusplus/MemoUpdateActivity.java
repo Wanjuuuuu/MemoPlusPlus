@@ -20,12 +20,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
 import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoUpdateBinding;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.utils.FileManager;
-import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
 import com.wanjuuuuu.memoplusplus.utils.PermissionManager;
 import com.wanjuuuuu.memoplusplus.viewmodels.UpdateViewModel;
 import com.wanjuuuuu.memoplusplus.views.LinkInputDialog;
@@ -45,8 +43,6 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
     private static final int REQUEST_CODE_GALLERY = 101;
     private static final int REQUEST_CODE_CAMERA = 102;
 
-    private UpdateMemoAdapter mMemoAdapter;
-    private Memo mMemo;
     private String mPhotoPathFromCamera;
 
     @Override
@@ -61,21 +57,13 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
 
     @Override
     protected int getBindingVariable() {
-        return 0;
+        return BR.updateViewModel;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMemoAdapter = new UpdateMemoAdapter();
-        mMemoAdapter.setOnRemoveListener(new UpdateMemoAdapter.OnRemoveListener() {
-            @Override
-            public void onRemove(Image image) {
-                removeImage(image);
-            }
-        });
-        mBinding.updateMemoRecyclerView.setAdapter(mMemoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mBinding.updateMemoRecyclerView.setLayoutManager(layoutManager);
 
@@ -86,16 +74,16 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
 
         // to update memo
         Bundle bundle = intent.getExtras();
-        mMemo = bundle.getParcelable("memo");
-        if (mMemo == null) {
+        Memo memo = bundle.getParcelable("memo");
+        if (memo == null) {
             showToast(getString(R.string.toast_update_memo_error));
             finish();
             return;
         }
-        mBinding.setMemo(mMemo);
+        mViewModel.setMemo(memo);
 
         List<Image> images = bundle.getParcelableArrayList("images");
-        mBinding.setImages(images);
+        mViewModel.setImages(images);
     }
 
     @Override
@@ -135,13 +123,13 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
                             showToast(getString(R.string.toast_dialog_scheme_warning));
                             return;
                         }
-                        addImage(mPhotoPathFromLinkUrl);
+                        mViewModel.addImage(mPhotoPathFromLinkUrl);
                         inputDialog.dismiss();
                     }
                 });
                 break;
             case R.id.update_complete_menu:
-                if (!isContentFilled()) {
+                if (!mViewModel.isContentFilled()) {
                     showToast(getString(R.string.toast_text_warning));
                     return false;
                 }
@@ -199,11 +187,11 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
                     showToast(getString(R.string.toast_load_photo_error));
                     return;
                 }
-                addImage(photoPathForGallery);
+                mViewModel.addImage(photoPathForGallery);
             }
         } else if (requestCode == REQUEST_CODE_CAMERA) {
             if (resultCode == RESULT_OK) {
-                addImage(mPhotoPathFromCamera);
+                mViewModel.addImage(mPhotoPathFromCamera);
             }
         }
     }
@@ -237,50 +225,21 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
         return dialogBuilder.create();
     }
 
-    private void addImage(String imagePath) {
-        Image image = new Image(0, 0, imagePath);
-        mViewModel.addImage(image);
-        mMemoAdapter.addImage(image);
-        mBinding.updateMemoRecyclerView.smoothScrollToPosition(mMemoAdapter.getItemCount() - 1);
-    }
-
-    private void removeImage(Image image) {
-        mViewModel.deleteImage(image);
-        mMemoAdapter.removeImage(image);
-    }
-
-    private boolean isContentFilled() {
-        return mMemoAdapter.isContentFilled();
-    }
-
     private void saveMemoAndFinishActivity() {
-        final boolean isUpdated = (mMemo != null);
-        createMemo();
-
-        mViewModel.updateMemoAndImages(mMemo, new OnCompleteListener() {
+        mViewModel.updateMemoAndImages(new UpdateViewModel.OnCompleteListener() {
             @Override
-            public void onComplete() {
-                if (isUpdated) {
-                    Intent intent = new Intent();
-                    intent.putExtra("memo", mMemo);
-                    setResult(RESULT_OK, intent);
-                }
+            public void onAdded() {
+                finish();
+            }
+
+            @Override
+            public void onUpdated(Memo memo) {
+                Intent intent = new Intent();
+                intent.putExtra("memo", memo);
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
     }
 
-    private void createMemo() {
-        String title = mMemoAdapter.getTitle();
-        String content = mMemoAdapter.getContent();
-        long timestamp = System.currentTimeMillis();
-
-        long memoId;
-        if (mMemo == null) {
-            mMemo = new Memo(0, title, content, timestamp);
-        } else {
-            memoId = mMemo.getId();
-            mMemo = new Memo(memoId, title, content, timestamp);
-        }
-    }
 }
