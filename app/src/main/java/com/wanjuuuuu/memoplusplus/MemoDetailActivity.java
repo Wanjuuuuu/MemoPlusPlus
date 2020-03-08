@@ -13,25 +13,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
 import com.wanjuuuuu.memoplusplus.databinding.ActivityMemoDetailBinding;
-import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
 import com.wanjuuuuu.memoplusplus.viewmodels.DetailViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, DetailViewModel> {
 
     private static final int REQUEST_CODE_UPDATE = 100;
-
-    private Memo mMemo;
-    private ArrayList<Image> mImages;
 
     @Override
     protected int getLayoutId() {
@@ -45,15 +36,13 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
 
     @Override
     protected int getBindingVariable() {
-        return 0;
+        return BR.detailViewModel;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DetailMemoAdapter memoAdapter = new DetailMemoAdapter();
-        mBinding.detailMemoRecyclerView.setAdapter(memoAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mBinding.detailMemoRecyclerView.setLayoutManager(layoutManager);
 
@@ -63,21 +52,15 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
             finish();
             return;
         }
-        mMemo = intent.getParcelableExtra("memo");
-        if (mMemo == null) {
+        Memo memo = intent.getParcelableExtra("memo");
+        if (memo == null) {
             showToast(getString(R.string.toast_load_memo_error));
             finish();
             return;
         }
-        mBinding.setMemo(mMemo);
 
-        mViewModel.getImages(mMemo.getId()).observe(this, new Observer<List<Image>>() {
-            @Override
-            public void onChanged(List<Image> images) {
-                mImages = new ArrayList<>(images);
-                mBinding.setImages(mImages);
-            }
-        });
+        mViewModel.setMemo(memo);
+        mViewModel.loadImages(this, memo.getId());
     }
 
     @Override
@@ -92,8 +75,8 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
         switch (item.getItemId()) {
             case R.id.detail_modify_menu:
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("memo", mMemo);
-                bundle.putParcelableArrayList("images", mImages);
+                bundle.putParcelable("memo", mViewModel.getMemo());
+                bundle.putParcelableArrayList("images", mViewModel.getImages());
 
                 Intent intent = new Intent(this, MemoUpdateActivity.class);
                 intent.putExtras(bundle);
@@ -109,7 +92,7 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            mViewModel.deleteMemoAndImages(mMemo, new OnCompleteListener() {
+                            mViewModel.deleteMemoAndImages(new OnCompleteListener() {
                                 @Override
                                 public void onComplete() {
                                     showToast(getString(R.string.toast_delete_memo));
@@ -133,13 +116,13 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
                 if (data == null) {
                     return;
                 }
-                mMemo = data.getParcelableExtra("memo");
-                if (mMemo == null) {
+                Memo memo = data.getParcelableExtra("memo");
+                if (memo == null) {
                     showToast(getString(R.string.toast_load_memo_error));
                     finish();
                     return;
                 }
-                mBinding.setMemo(mMemo);
+                mViewModel.setMemo(memo);
                 mBinding.detailMemoRecyclerView.smoothScrollToPosition(0);
             }
         }

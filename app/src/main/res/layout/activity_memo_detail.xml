@@ -3,17 +3,9 @@
 
     <data>
 
-        <import type="java.util.List" />
-
-        <import type="com.wanjuuuuu.memoplusplus.models.Image" />
-
         <variable
-            name="memo"
-            type="com.wanjuuuuu.memoplusplus.models.Memo" />
-
-        <variable
-            name="images"
-            type="List&lt;Image>" />
+            name="detailViewModel"
+            type="com.wanjuuuuu.memoplusplus.viewmodels.DetailViewModel" />
     </data>
 
     <LinearLayout
@@ -24,8 +16,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/detail_memo_recycler_view"
-            bindMemo="@{memo}"
-            bindImages="@{images}"
+            adapter="@{detailViewModel.adapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

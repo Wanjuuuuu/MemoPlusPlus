@@ -29,7 +29,7 @@ public class DetailMemoAdapter extends BaseAdapter {
     }
 
     @Override
-    void setMemo(Memo memo) {
+    public void setMemo(Memo memo) {
         if (memo == null) {
             return;
         }
@@ -38,7 +38,7 @@ public class DetailMemoAdapter extends BaseAdapter {
     }
 
     @Override
-    void setImages(List<Image> images) {
+    public void setImages(List<Image> images) {
         mImageList.clear();
         if (images != null && !images.isEmpty()) {
             mImageList.addAll(images);
