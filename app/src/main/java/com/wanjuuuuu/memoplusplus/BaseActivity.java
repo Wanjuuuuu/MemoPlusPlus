@@ -7,10 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-public abstract class BaseActivity<VB extends ViewDataBinding, VM extends ViewModel> extends AppCompatActivity {
+import com.wanjuuuuu.memoplusplus.viewmodels.BaseViewModel;
+
+public abstract class BaseActivity<VB extends ViewDataBinding, VM extends BaseViewModel> extends AppCompatActivity {
 
     protected VB mBinding;
     protected VM mViewModel;
@@ -30,6 +31,7 @@ public abstract class BaseActivity<VB extends ViewDataBinding, VM extends ViewMo
         if (mViewModel == null) {
             mViewModel = new ViewModelProvider(this).get(getViewModel());
         }
+        mViewModel.init(this);
 //        mBinding.setVariable(getBindingVariable(), mViewModel);
 //        mBinding.executePendingBindings();
     }

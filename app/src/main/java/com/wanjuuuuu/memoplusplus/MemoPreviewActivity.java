@@ -65,7 +65,7 @@ public class MemoPreviewActivity extends BaseActivity<ActivityMemoPreviewBinding
         layoutManager.setStackFromEnd(true);
         mBinding.previewMemoRecyclerView.setLayoutManager(layoutManager);
 
-        mViewModel.getAllMemos(this).observe(this, new Observer<List<MemoWithFirstImage>>() {
+        mViewModel.getAllMemos().observe(this, new Observer<List<MemoWithFirstImage>>() {
             @Override
             public void onChanged(List<MemoWithFirstImage> memoWithFirstImages) {
                 int previousItemCount = mMemoAdapter.getItemCount();

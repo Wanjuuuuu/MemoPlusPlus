@@ -71,7 +71,7 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
         }
         mBinding.setMemo(mMemo);
 
-        mViewModel.getImages(this, mMemo.getId()).observe(this, new Observer<List<Image>>() {
+        mViewModel.getImages(mMemo.getId()).observe(this, new Observer<List<Image>>() {
             @Override
             public void onChanged(List<Image> images) {
                 mImages = new ArrayList<>(images);
@@ -109,14 +109,13 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            mViewModel.deleteMemoAndImages(MemoDetailActivity.this, mMemo,
-                                    new OnCompleteListener() {
-                                        @Override
-                                        public void onComplete() {
-                                            showToast(getString(R.string.toast_delete_memo));
-                                            finish();
-                                        }
-                                    });
+                            mViewModel.deleteMemoAndImages(mMemo, new OnCompleteListener() {
+                                @Override
+                                public void onComplete() {
+                                    showToast(getString(R.string.toast_delete_memo));
+                                    finish();
+                                }
+                            });
                         }
                     });
                 }

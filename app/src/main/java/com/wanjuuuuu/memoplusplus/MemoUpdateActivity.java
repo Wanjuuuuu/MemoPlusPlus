@@ -257,7 +257,7 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
         final boolean isUpdated = (mMemo != null);
         createMemo();
 
-        mViewModel.updateMemoAndImages(this, mMemo, new OnCompleteListener() {
+        mViewModel.updateMemoAndImages(mMemo, new OnCompleteListener() {
             @Override
             public void onComplete() {
                 if (isUpdated) {

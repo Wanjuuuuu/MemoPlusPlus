@@ -1,18 +1,10 @@
 package com.wanjuuuuu.memoplusplus.viewmodels;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
-import android.os.Looper;
-
-import androidx.lifecycle.ViewModel;
 
 import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
-import com.wanjuuuuu.memoplusplus.models.ImageDao;
 import com.wanjuuuuu.memoplusplus.models.Memo;
-import com.wanjuuuuu.memoplusplus.models.MemoDao;
-import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.utils.OnCompleteListener;
 
 import java.util.ArrayList;
@@ -20,7 +12,7 @@ import java.util.List;
 
 import static android.os.Looper.getMainLooper;
 
-public class UpdateViewModel extends ViewModel {
+public class UpdateViewModel extends BaseViewModel {
 
     private List<Image> mImagesInserted = new ArrayList<>();
     private List<Image> mImagesDeleted = new ArrayList<>();
@@ -37,13 +29,12 @@ public class UpdateViewModel extends ViewModel {
         }
     }
 
-    public void updateMemoAndImages(final Context context, final Memo memo,
-                                    final OnCompleteListener completeListener) {
+    public void updateMemoAndImages(final Memo memo, final OnCompleteListener completeListener) {
         DatabaseManager.executeTransaction(new Runnable() {
             @Override
             public void run() {
-                long memoId = updateMemo(context, memo);
-                updateImages(context, memoId);
+                long memoId = updateMemo(memo);
+                updateImages(memoId);
 
                 Handler handler = new Handler(getMainLooper());
                 handler.post(new Runnable() {
@@ -58,21 +49,17 @@ public class UpdateViewModel extends ViewModel {
         });
     }
 
-    private long updateMemo(Context context, Memo memo) {
-        MemoDao memoDao = MemoPlusDatabase.getInstance(context).memoDao();
-
+    private long updateMemo(Memo memo) {
         long memoId = memo.getId();
         if (memoId == 0) {
-            memoId = memoDao.insertMemo(memo);
+            memoId = mMemoDao.insertMemo(memo);
         } else {
-            memoDao.updateMemo(memo);
+            mMemoDao.updateMemo(memo);
         }
         return memoId;
     }
 
-    private void updateImages(Context context, long memoId) {
-        ImageDao imageDao = MemoPlusDatabase.getInstance(context).imageDao();
-
+    private void updateImages(long memoId) {
         List<Image> newImages = new ArrayList<>();
         for (Image image : mImagesInserted) {
             if (image != null) {
@@ -80,7 +67,7 @@ public class UpdateViewModel extends ViewModel {
                 newImages.add(newImage);
             }
         }
-        imageDao.insertImages(newImages);
-        imageDao.deleteImages(mImagesDeleted);
+        mImageDao.insertImages(newImages);
+        mImageDao.deleteImages(mImagesDeleted);
     }
 }

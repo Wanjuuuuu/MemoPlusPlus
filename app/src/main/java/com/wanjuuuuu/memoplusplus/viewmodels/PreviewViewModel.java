@@ -1,24 +1,18 @@
 package com.wanjuuuuu.memoplusplus.viewmodels;
 
-import android.content.Context;
-
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
-import com.wanjuuuuu.memoplusplus.models.MemoDao;
-import com.wanjuuuuu.memoplusplus.models.MemoPlusDatabase;
 import com.wanjuuuuu.memoplusplus.models.MemoWithFirstImage;
 
 import java.util.List;
 
-public class PreviewViewModel extends ViewModel {
+public class PreviewViewModel extends BaseViewModel {
 
     private LiveData<List<MemoWithFirstImage>> mMemos;
 
-    public LiveData<List<MemoWithFirstImage>> getAllMemos(Context context) {
+    public LiveData<List<MemoWithFirstImage>> getAllMemos() {
         if (mMemos == null) {
-            MemoDao memoDao = MemoPlusDatabase.getInstance(context).memoDao();
-            mMemos = memoDao.getAllMemoWithFirstImage();
+            mMemos = mMemoDao.getAllMemoWithFirstImage();
         }
         return mMemos;
     }
