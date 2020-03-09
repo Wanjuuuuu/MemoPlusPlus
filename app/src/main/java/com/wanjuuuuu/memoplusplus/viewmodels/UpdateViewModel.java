@@ -1,16 +1,13 @@
 package com.wanjuuuuu.memoplusplus.viewmodels;
 
-import android.os.Handler;
-
 import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
-import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
+import com.wanjuuuuu.memoplusplus.utils.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
+import com.wanjuuuuu.memoplusplus.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.os.Looper.getMainLooper;
 
 public class UpdateViewModel extends BaseViewModel {
 
@@ -20,11 +17,14 @@ public class UpdateViewModel extends BaseViewModel {
         void onUpdated(Memo memo);
     }
 
+    private static DatabaseManager sDatabaseManager = DatabaseManager.getInstance();
+
     private UpdateMemoAdapter mAdapter;
     private Memo mMemo;
     private List<Image> mImages;
     private List<Image> mImagesInserted = new ArrayList<>();
     private List<Image> mImagesDeleted = new ArrayList<>();
+    private boolean mIsNew;
 
     @Override
     protected void setUpAdapter() {
@@ -75,27 +75,13 @@ public class UpdateViewModel extends BaseViewModel {
     }
 
     public void updateMemoAndImages(final OnCompleteListener completeListener) {
-        DatabaseManager.executeTransaction(new Runnable() {
+        sDatabaseManager.executeTransaction(new Runnable() {
             @Override
             public void run() {
-                final boolean isAdding = (mMemo == null);
-
                 long memoId = updateMemo();
                 updateImages(memoId);
 
-                Handler handler = new Handler(getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (completeListener != null) {
-                            if (isAdding) {
-                                completeListener.onAdded();
-                            } else {
-                                completeListener.onUpdated(mMemo);
-                            }
-                        }
-                    }
-                });
+                onComplete(completeListener);
             }
         });
     }
@@ -105,6 +91,7 @@ public class UpdateViewModel extends BaseViewModel {
 
         long memoId = mMemo.getId();
         if (memoId == 0) {
+            mIsNew = true;
             memoId = mMemoDao.insertMemo(mMemo);
         } else {
             mMemoDao.updateMemo(mMemo);
@@ -133,5 +120,20 @@ public class UpdateViewModel extends BaseViewModel {
         }
         mImageDao.insertImages(newImages);
         mImageDao.deleteImages(mImagesDeleted);
+    }
+
+    private void onComplete(final OnCompleteListener completeListener) {
+        sDatabaseManager.finishWith(new Runnable() {
+            @Override
+            public void run() {
+                if (completeListener != null) {
+                    if (mIsNew) {
+                        completeListener.onAdded();
+                    } else {
+                        completeListener.onUpdated(mMemo);
+                    }
+                }
+            }
+        });
     }
 }

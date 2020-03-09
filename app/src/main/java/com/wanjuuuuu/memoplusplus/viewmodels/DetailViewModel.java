@@ -1,26 +1,24 @@
 package com.wanjuuuuu.memoplusplus.viewmodels;
 
-import android.os.Handler;
-
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import com.wanjuuuuu.memoplusplus.adapters.DetailMemoAdapter;
-import com.wanjuuuuu.memoplusplus.models.DatabaseManager;
+import com.wanjuuuuu.memoplusplus.utils.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
 import com.wanjuuuuu.memoplusplus.models.Memo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.os.Looper.getMainLooper;
-
 public class DetailViewModel extends BaseViewModel {
 
     public interface OnCompleteListener {
         void onRemoved();
     }
+
+    private static DatabaseManager sDatabaseManager = DatabaseManager.getInstance();
 
     private DetailMemoAdapter mAdapter;
     private Memo mMemo;
@@ -67,21 +65,24 @@ public class DetailViewModel extends BaseViewModel {
     }
 
     public void deleteMemoAndImages(final OnCompleteListener completeListener) {
-        DatabaseManager.executeTransaction(new Runnable() {
+        sDatabaseManager.executeTransaction(new Runnable() {
             @Override
             public void run() {
                 mImageDao.deleteImages(mImages.getValue());
                 mMemoDao.deleteMemo(mMemo);
 
-                Handler handler = new Handler(getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (completeListener != null) {
-                            completeListener.onRemoved();
-                        }
-                    }
-                });
+                onComplete(completeListener);
+            }
+        });
+    }
+
+    private void onComplete(final OnCompleteListener completeListener) {
+        sDatabaseManager.finishWith(new Runnable() {
+            @Override
+            public void run() {
+                if (completeListener != null) {
+                    completeListener.onRemoved();
+                }
             }
         });
     }
