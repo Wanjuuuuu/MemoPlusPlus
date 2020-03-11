@@ -43,6 +43,7 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
     private static final int REQUEST_CODE_GALLERY = 101;
     private static final int REQUEST_CODE_CAMERA = 102;
 
+    private long mMemoId;
     private String mPhotoPathFromCamera;
 
     @Override
@@ -80,10 +81,26 @@ public class MemoUpdateActivity extends BaseActivity<ActivityMemoUpdateBinding, 
             finish();
             return;
         }
+        mMemoId = memo.getId();
         mViewModel.setMemo(memo);
 
         List<Image> images = bundle.getParcelableArrayList("images");
         mViewModel.setImages(images);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        mMemoId = savedInstanceState.getLong("memoId");
+
+        mViewModel.loadMemo(mMemoId);
+        mViewModel.loadImages(mMemoId);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong("memoId", mMemoId);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override

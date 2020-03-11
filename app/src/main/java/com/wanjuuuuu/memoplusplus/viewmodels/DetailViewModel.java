@@ -52,6 +52,13 @@ public class DetailViewModel extends BaseViewModel {
         mAdapter.setMemo(memo);
     }
 
+    public void loadMemo(long memoId) {
+        if (mMemo == null) {
+            mMemo = mMemoDao.getMemo(memoId).getValue();
+        }
+        mAdapter.setMemo(mMemo);
+    }
+
     public void loadImages(LifecycleOwner owner, long memoId) {
         if (mImages == null) {
             mImages = mImageDao.getImages(memoId);

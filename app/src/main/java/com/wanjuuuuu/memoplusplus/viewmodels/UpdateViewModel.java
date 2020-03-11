@@ -1,5 +1,9 @@
 package com.wanjuuuuu.memoplusplus.viewmodels;
 
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+
 import com.wanjuuuuu.memoplusplus.adapters.UpdateMemoAdapter;
 import com.wanjuuuuu.memoplusplus.utils.DatabaseManager;
 import com.wanjuuuuu.memoplusplus.models.Image;
@@ -72,6 +76,20 @@ public class UpdateViewModel extends BaseViewModel {
             mImagesDeleted.add(image);
         }
         mAdapter.removeImage(image);
+    }
+
+    public void loadMemo(long memoId) {
+        if (mMemo == null) {
+            mMemo = mMemoDao.getMemo(memoId).getValue();
+        }
+        mAdapter.setMemo(mMemo);
+    }
+
+    public void loadImages(long memoId) {
+        if (mImages == null) {
+            mImages = mImageDao.getImages(memoId).getValue();
+        }
+        mAdapter.setImages(mImages);
     }
 
     public void updateMemoAndImages(final OnCompleteListener completeListener) {

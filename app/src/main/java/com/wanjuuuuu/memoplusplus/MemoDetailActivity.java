@@ -23,6 +23,8 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
 
     private static final int REQUEST_CODE_UPDATE = 100;
 
+    private long mMemoId;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_memo_detail;
@@ -47,6 +49,9 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
 
         Intent intent = getIntent();
         if (intent == null) {
+            if (savedInstanceState != null) {
+                return;
+            }
             showToast(getString(R.string.toast_load_memo_error));
             finish();
             return;
@@ -57,9 +62,24 @@ public class MemoDetailActivity extends BaseActivity<ActivityMemoDetailBinding, 
             finish();
             return;
         }
-
+        mMemoId = memo.getId();
         mViewModel.setMemo(memo);
         mViewModel.loadImages(this, memo.getId());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        mMemoId = savedInstanceState.getLong("memoId");
+
+        mViewModel.loadMemo(mMemoId);
+        mViewModel.loadImages(this, mMemoId);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong("memoId", mMemoId);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
